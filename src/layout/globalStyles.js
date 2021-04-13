@@ -1,6 +1,9 @@
 import {createGlobalStyle} from 'styled-components';
+import AntdCSS from 'antd/dist/antd.min.css';
 
 const GlobalStyles = createGlobalStyle`
+    ${AntdCSS}
+
     html {
         font-size: 14px;
 
@@ -15,6 +18,12 @@ const GlobalStyles = createGlobalStyle`
 
     html, #root, body {
         margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        background: ${({theme}) => theme.pallet.background};
     }
 `;
 
