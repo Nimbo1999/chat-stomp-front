@@ -1,9 +1,11 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { Switch, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Switch } from 'react-router-dom';
 import { List, Avatar, Typography } from 'antd';
 
+import {selectUser} from '../../redux/user/userSlice';
 import {selectContacts} from '../../redux/contacts/contactsSlice';
+import {setRoom} from '../../redux/room/roomSlice.reducer';
 
 import {AppRoute} from '../routes'
 import ROUTES_CONSTANTS from '../routes.constants'
@@ -15,8 +17,21 @@ import { ChatWrapper, ChatSider } from './styled.chat';
 
 const {Title} = Typography;
 
-function ChatPage() {
+function ChatPage({ history }) {
+    const dispatch = useDispatch();
     const contacts = useSelector(selectContacts);
+    const currentUser = useSelector(selectUser);
+
+    function onSelectContact(user) {
+        const newRoom = {
+            token: `${currentUser.token}${user.token}`,
+            user,
+        }
+
+        dispatch(setRoom(newRoom));
+
+        history.push(`${ROUTES_CONSTANTS.CHAT}${ROUTES_CONSTANTS.URL_PARAM(newRoom.token)}`);
+    }
 
     return (
         <ChatWrapper style={{height: '100%'}}>
@@ -25,8 +40,8 @@ function ChatPage() {
                     style={{ padding: '16px 24px' }}
                     header={<Title level={3}>Contatos</Title>}
                     dataSource={contacts}
-                    renderItem={(item) => (
-                        <Link to={ `${ROUTES_CONSTANTS.CHAT}${ROUTES_CONSTANTS.URL_PARAM(item.token)}` }>
+                    renderItem={item => (
+                        <div onClick={() => onSelectContact(item)}>
                             <List.Item>
                                 <List.Item.Meta
                                     avatar={
@@ -36,7 +51,7 @@ function ChatPage() {
                                     description={item.status}
                                 />
                             </List.Item>
-                        </Link>
+                        </div>
                     )}
                 >
                 </List>

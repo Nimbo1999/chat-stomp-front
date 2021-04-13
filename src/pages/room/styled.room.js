@@ -1,3 +1,9 @@
-// import styled from 'styled-components';
+import styled from 'styled-components';
 
-// export {  }
+const HeaderTitleWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+`;
+
+export { HeaderTitleWrapper }
