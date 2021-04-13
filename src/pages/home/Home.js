@@ -3,6 +3,7 @@ import { Card, Select, Typography, Button, Space, Row, Col } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {selectUserName, setName} from '../../redux/user/userSlice';
+import {selectContacts, setContacts} from '../../redux/contacts/contactsSlice';
 
 import ROUTES_CONSTANTS from '../routes.constants';
 
@@ -15,15 +16,19 @@ function HomePage({ history }) {
     const dispatch = useDispatch();
 
     const user = useSelector(selectUserName);
+    const contacts = useSelector(selectContacts);
 
     function onChange(value) {
-        dispatch(setName(value));
+        const contact = contacts.find(item => item.token === value);
+        dispatch(setName(contact));
     }
 
     function handleSubmit(event) {
         event.preventDefault();
 
-        console.log({user});
+        const newContacts = contacts.filter(item => item.name !== user);
+        dispatch(setContacts(newContacts))
+
         history.push(ROUTES_CONSTANTS.CHAT);
     }
 
@@ -47,12 +52,9 @@ function HomePage({ history }) {
                             }}
                             value={user}
                         >
-                            <Option value="Danilo Laterra">Danilo Laterra</Option>
-                            <Option value="João Gabriel">João Gabriel</Option>
-                            <Option value="Matheus Lopes">Matheus Lopes</Option>
-                            <Option value="Maximiliano Ferreira">Maximiliano Ferreira</Option>
-                            <Option value="Rafael thomase">Rafael thomase</Option>
-                            <Option value="Renan">Renan</Option>
+                            {contacts.map(contact => (
+                                <Option value={contact.token}>{contact.name}</Option>
+                            ))}
                         </Select>
 
                         <Row justify="end">
