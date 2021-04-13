@@ -5,17 +5,11 @@ import { useSelector } from 'react-redux';
 import { selectUserName } from '../redux/user/userSlice';
 
 import HomePage from './home/Home';
-import RoomPage from './room/Room';
 import ChatPage from './chat/Chat';
 
 import ROUTES_CONSTANTS from './routes.constants';
 
 const routes = [
-    {
-        key: ROUTES_CONSTANTS.ROOM,
-        path: ROUTES_CONSTANTS.ROOM,
-        component: RoomPage
-    },
     {
         key: ROUTES_CONSTANTS.CHAT,
         path: ROUTES_CONSTANTS.CHAT,
@@ -30,12 +24,12 @@ const routes = [
     },
 ];
 
-function AppRoute({ path, ...rest }) {
+function AppRoute({ path, exact, component }) {
     const hasUser = useSelector(selectUserName);
 
     if (!hasUser && path !== ROUTES_CONSTANTS.HOME) return <Redirect to={ROUTES_CONSTANTS.HOME} />
 
-    return <Route path={path} {...rest} />
+    return <Route path={path} exact={exact} component={component} />
 
 }
 

@@ -1,10 +1,16 @@
 import React from 'react';
+import { Layout } from 'antd';
+
+import { RoomHeader } from './styled.room';
+
+const { Content } = Layout;
 
 function RoomPage() {
     return (
-        <div>
-            This is the Room Page
-        </div>
+        <Layout>
+            <RoomHeader>Header</RoomHeader>
+            <Content>Content</Content>
+        </Layout>
     );
 }
 

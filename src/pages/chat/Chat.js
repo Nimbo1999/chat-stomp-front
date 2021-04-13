@@ -1,17 +1,26 @@
 import React from 'react';
-import { Layout } from 'antd';
+import { Switch } from 'react-router-dom';
 
-const { Sider, Header, Content } = Layout;
+import {AppRoute} from '../routes'
+import ROUTES_CONSTANTS from '../routes.constants'
+
+import RoomPage from '../room/Room';
+import EmptyPage from '../empty/Empty';
+
+import { ChatWrapper, ChatSider } from './styled.chat';
 
 function ChatPage() {
     return (
-        <Layout>
-            <Sider>Sider</Sider>
-            <Layout>
-                <Header>Header</Header>
-                <Content>Content</Content>
-            </Layout>
-        </Layout>
+        <ChatWrapper style={{height: '100%'}}>
+            <ChatSider style={{ background: '#fff' }} width={300}>Sider</ChatSider>
+
+            <Switch>
+                <AppRoute path={ROUTES_CONSTANTS.ROOM} component={RoomPage} />
+
+                <AppRoute path={ROUTES_CONSTANTS.CHAT} exact component={EmptyPage} />
+            </Switch>
+
+        </ChatWrapper>
     );
 }
 
