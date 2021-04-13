@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import { store } from './redux/store';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import {ThemeProvider} from 'styled-components';
+
+import App from './App';
+
+import { store } from './redux/store';
+import theme from './layout/theme';
+import GlobalStyles from './layout/globalStyles';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+	<React.StrictMode>
+		<ThemeProvider theme={theme}>
+			<GlobalStyles />
+			<Provider store={store}>
+				<BrowserRouter>
+					<Suspense fallback={<div>Loading...</div>}>
+						<App />
+					</Suspense>
+				</BrowserRouter>
+			</Provider>
+		</ThemeProvider>
+	</React.StrictMode>,
+	document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
