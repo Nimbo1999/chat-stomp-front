@@ -13,7 +13,6 @@ const routes = [
     {
         key: ROUTES_CONSTANTS.CHAT,
         path: ROUTES_CONSTANTS.CHAT,
-        exact: true,
         component: ChatPage
     },
     {
