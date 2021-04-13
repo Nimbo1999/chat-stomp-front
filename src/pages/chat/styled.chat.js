@@ -11,4 +11,8 @@ const ChatSider = styled(Sider)`
     background: ${({theme}) => theme.pallet.white};
 `;
 
-export { ChatWrapper, ChatSider };
+const ItemWrapper = styled.div`
+    cursor: pointer;
+`;
+
+export { ChatWrapper, ChatSider, ItemWrapper };

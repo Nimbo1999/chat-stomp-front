@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Layout, PageHeader, Button } from 'antd';
 
 import { selectRoomUser, selectRoomToken } from '../../redux/room/roomSlice.reducer';
+import ROUTES_CONSTANTS from '../routes.constants';
 
 // import { HeaderTitleWrapper } from './styled.room';
 
@@ -15,7 +16,7 @@ function RoomPage({ history }) {
     return (
         <Layout>
             <PageHeader
-                onBack={ () => history.goBack() }
+                onBack={ () => history.replace(ROUTES_CONSTANTS.CHAT) }
                 title={roomUser.name}
                 subTitle={roomUser.status}
                 extra={<Button type="link">Encerrar bate-papo</Button>}

@@ -13,7 +13,7 @@ import ROUTES_CONSTANTS from '../routes.constants'
 import RoomPage from '../room/Room';
 import EmptyPage from '../empty/Empty';
 
-import { ChatWrapper, ChatSider } from './styled.chat';
+import { ChatWrapper, ChatSider, ItemWrapper } from './styled.chat';
 
 const {Title} = Typography;
 
@@ -41,7 +41,7 @@ function ChatPage({ history }) {
                     header={<Title level={3}>Contatos</Title>}
                     dataSource={contacts}
                     renderItem={item => (
-                        <div onClick={() => onSelectContact(item)}>
+                        <ItemWrapper onClick={() => onSelectContact(item)}>
                             <List.Item>
                                 <List.Item.Meta
                                     avatar={
@@ -51,7 +51,7 @@ function ChatPage({ history }) {
                                     description={item.status}
                                 />
                             </List.Item>
-                        </div>
+                        </ItemWrapper>
                     )}
                 >
                 </List>
