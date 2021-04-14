@@ -5,9 +5,10 @@ import { Layout, PageHeader, Button } from 'antd';
 import { selectRoomUser, selectRoomToken } from '../../redux/room/roomSlice.reducer';
 import ROUTES_CONSTANTS from '../routes.constants';
 
-// import { HeaderTitleWrapper } from './styled.room';
+import ChatHistory from '../../components/chat-history/ChatHistory';
+import CommentaryInput from '../../components/commentary/CommentaryInput';
 
-const { Content } = Layout;
+import { RoomContent } from './styled.room';
 
 function RoomPage({ history }) {
     const roomToken = useSelector(selectRoomToken);
@@ -22,7 +23,10 @@ function RoomPage({ history }) {
                 extra={<Button type="link">Encerrar bate-papo</Button>}
                 style={{ background: '#ffffff' }}
             />
-            <Content>Content</Content>
+            <RoomContent>
+                <ChatHistory />
+                <CommentaryInput />
+            </RoomContent>
         </Layout>
     );
 }

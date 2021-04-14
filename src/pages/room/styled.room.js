@@ -1,9 +1,13 @@
 import styled from 'styled-components';
+import { Layout } from 'antd';
 
-const HeaderTitleWrapper = styled.div`
+const { Content } = Layout
+
+const RoomContent = styled(Content)`
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    flex-direction: column;
+
+    padding: ${({theme}) => theme.spacing(2)};
 `;
 
-export { HeaderTitleWrapper }
+export { RoomContent }
