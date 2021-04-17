@@ -6,8 +6,8 @@ import routes, { AppRoute } from './pages/routes';
 function App() {
 	return (
 		<Switch>
-			{routes.map(page => (
-				<AppRoute {...page} />
+			{routes.map(({key, ...props}) => (
+				<AppRoute key={key} {...props} />
 			))}
 		</Switch>
 	);

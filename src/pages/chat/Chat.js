@@ -48,7 +48,7 @@ function ChatPage({ history }) {
                     header={<Title level={3}>Contatos</Title>}
                     dataSource={[]}
                     renderItem={item => (
-                        <ItemWrapper onClick={() => onSelectContact(item)}>
+                        <ItemWrapper key={item.token} onClick={() => onSelectContact(item)}>
                             <List.Item>
                                 <List.Item.Meta
                                     avatar={

@@ -53,7 +53,7 @@ function HomePage({ history }) {
                             value={userName}
                         >
                             {contacts.map(contact => (
-                                <Option value={contact.token}>{contact.name}</Option>
+                                <Option key={contact.token} value={contact.token}>{contact.name}</Option>
                             ))}
                         </Select>
 
