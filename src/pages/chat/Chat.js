@@ -1,11 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Switch } from 'react-router-dom';
-import { List, Avatar, Typography, Button, Row, Col, Select } from 'antd';
+import { List, Avatar, Typography, Button, Row, Col, Alert } from 'antd';
+import {MessageTwoTone} from '@ant-design/icons';
 
-import {selectUser} from '../../redux/user/userSlice';
-import {selectContacts, setShowNewRoomSection} from '../../redux/channel/channelSlice.reducer';
-import {setRoom} from '../../redux/room/roomSlice.reducer';
+import {
+    selectError, setShowNewRoomSection, closeError, setCurrentRoom, selectAvailableRooms,
+    selectCurrentRoom
+} from '../../redux/channel/channelSlice.reducer';
 
 import {AppRoute} from '../routes';
 import ROUTES_CONSTANTS from '../routes.constants'
@@ -16,24 +18,20 @@ import EmptyPage from '../empty/Empty';
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
 
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.chat';
+import { useTheme } from 'styled-components';
 
 const {Title} = Typography;
-const {Option} = Select;
 
 function ChatPage({ history }) {
     const dispatch = useDispatch();
-    const contacts = useSelector(selectContacts);
-    const currentUser = useSelector(selectUser);
+    const error = useSelector(selectError);
+    const availableRooms = useSelector(selectAvailableRooms);
+    const currentRoom = useSelector(selectCurrentRoom);
+    const theme = useTheme();
 
-    function onSelectContact(user) {
-        const newRoom = {
-            token: `${currentUser.token}${user.token}`,
-            user,
-        }
-
-        dispatch(setRoom(newRoom));
-
-        history.push(`${ROUTES_CONSTANTS.CHAT}${ROUTES_CONSTANTS.URL_PARAM(newRoom.token)}`);
+    function onSelectRoom(token) {
+        dispatch(setCurrentRoom({ token }));
+        history.push(`${ROUTES_CONSTANTS.CHAT}${ROUTES_CONSTANTS.URL_PARAM(token)}`);
     }
 
     function showCreationRoomCard() {
@@ -46,16 +44,24 @@ function ChatPage({ history }) {
                 <List
                     style={{ padding: '16px 24px' }}
                     header={<Title level={3}>Contatos</Title>}
-                    dataSource={[]}
+                    dataSource={availableRooms}
                     renderItem={item => (
-                        <ItemWrapper key={item.token} onClick={() => onSelectContact(item)}>
-                            <List.Item>
+                        <ItemWrapper key={item} onClick={() => onSelectRoom(item)}>
+                            <List.Item style={{
+                                background: currentRoom && currentRoom.token === item
+                                    ? theme.pallet.lightBlue
+                                    : theme.pallet.white
+                            }}>
                                 <List.Item.Meta
                                     avatar={
-                                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                                        <Avatar
+                                            icon={<MessageTwoTone />}
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                            }}
+                                        />
                                     }
-                                    title={item.name}
-                                    description={item.status}
+                                    title={item}
                                 />
                             </List.Item>
                         </ItemWrapper>
@@ -70,6 +76,28 @@ function ChatPage({ history }) {
 
                             <Col span={24}>
                                 <CreateRoomCard />
+                            </Col>
+
+                            <Col span={24}>
+                                {error && (
+                                    <Alert
+                                        message={error}
+                                        type="error"
+                                        showIcon
+                                        action={
+                                            <Button
+                                                size="small"
+                                                danger
+                                                type="link"
+                                                onClick={() => {
+                                                    dispatch(closeError());
+                                                }}
+                                            >
+                                                ok
+                                            </Button>
+                                        }
+                                    />
+                                )}
                             </Col>
                         </Row>
                     )}

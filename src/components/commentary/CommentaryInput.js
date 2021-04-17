@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Input, Button } from 'antd';
+import { Input, Button } from 'antd';
 
 import CommentaryWrapper from './styled.commentary';
 
@@ -15,11 +15,9 @@ function CommentaryInput() {
     return (
         <CommentaryWrapper>
 
-            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+            <TextArea placeholder="Mensagem..." autoSize onChange={handleChange} value={text} size="large" />
 
-            <TextArea placeholder="Mensagem..." autoSize onChange={handleChange} value={text} />
-
-            <Button type="primary" htmlType="submit">Enviar</Button>
+            <Button type="primary" htmlType="submit" size="large">Enviar</Button>
 
         </CommentaryWrapper>
     );

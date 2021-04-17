@@ -6,7 +6,7 @@ const CommentaryWrapper = styled.div`
     align-items: flex-start;
 
     textarea {
-        margin: 0px ${({theme}) => theme.spacing(2)};
+        margin: 0px ${({theme}) => theme.spacing(2)} 0px 0px;
     }
 `;
 

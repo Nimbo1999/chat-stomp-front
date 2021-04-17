@@ -1,25 +1,38 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Layout, PageHeader, Button } from 'antd';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Layout, PageHeader, Button, Spin } from 'antd';
 
-import { selectRoomUser, selectRoomToken } from '../../redux/room/roomSlice.reducer';
+import { selectCurrentRoom, setCurrentRoom } from '../../redux/channel/channelSlice.reducer';
+import getRoomAction from '../../redux/channel/getRoom.action';
+
 import ROUTES_CONSTANTS from '../routes.constants';
 
 import ChatHistory from '../../components/chat-history/ChatHistory';
 import CommentaryInput from '../../components/commentary/CommentaryInput';
 
-import { RoomContent } from './styled.room';
+import { RoomContent, LoadingRoomWrapper } from './styled.room';
 
-function RoomPage({ history }) {
-    const roomToken = useSelector(selectRoomToken);
-    const roomUser = useSelector(selectRoomUser);
+function RoomPage({ history, match }) {
+    const {params: { token }} = match;
+    const dispatch = useDispatch();
 
-    return (
+    const currentRoom = useSelector(selectCurrentRoom);
+
+    useEffect(() => {
+        dispatch(getRoomAction(token));
+    }, [token, dispatch]);
+
+    function onGoBack() {
+        dispatch(setCurrentRoom(null));
+        history.replace(ROUTES_CONSTANTS.CHAT);
+    }
+
+    if (currentRoom && currentRoom.recipient) return (
         <Layout>
             <PageHeader
-                onBack={ () => history.replace(ROUTES_CONSTANTS.CHAT) }
-                title={roomUser.name}
-                subTitle={roomUser.status}
+                onBack={onGoBack}
+                title={currentRoom.recipient.name}
+                subTitle={currentRoom.recipient.status}
                 extra={<Button type="link">Encerrar bate-papo</Button>}
                 style={{ background: '#ffffff' }}
             />
@@ -29,6 +42,14 @@ function RoomPage({ history }) {
             </RoomContent>
         </Layout>
     );
+
+    return (
+        <Layout>
+            <LoadingRoomWrapper>
+                <Spin size="large" />
+            </LoadingRoomWrapper>
+        </Layout>
+    )
 }
 
 export default RoomPage;

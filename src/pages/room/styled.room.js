@@ -10,4 +10,13 @@ const RoomContent = styled(Content)`
     padding: ${({theme}) => theme.spacing(2)};
 `;
 
-export { RoomContent }
+const LoadingRoomWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+`;
+
+export { RoomContent, LoadingRoomWrapper }

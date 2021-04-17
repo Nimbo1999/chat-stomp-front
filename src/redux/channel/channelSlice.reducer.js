@@ -1,13 +1,19 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
+
+import createRoom, { createRoomFulfilled, createRoomPending, createRoomRejected } from './createRoom.action';
+import getRoom, { getRoomPending, getRoomFulfilled, getRoomRejected } from './getRoom.action';
 import contacts from '../../mock/contacts.mock';
 
 const initialState = {
   contacts,
   availableRooms: [],
+  currentRoom: null,
   isShowingNewRoomSection: false,
   selectedRoomUser: {
     token: ''
   },
+  loading: false,
+  error: null
 };
 
 export const channelSlice = createSlice({
@@ -26,10 +32,29 @@ export const channelSlice = createSlice({
       ...state,
       selectedRoomUser: action.payload,
     }),
+    closeError: (state) => ({
+      ...state,
+      error: null
+    }),
+    setCurrentRoom: (state, action) => ({
+      ...state,
+      currentRoom: action.payload,
+    })
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createRoom.pending, createRoomPending)
+      .addCase(createRoom.fulfilled, createRoomFulfilled)
+      .addCase(createRoom.rejected, createRoomRejected)
+      .addCase(getRoom.pending, getRoomPending)
+      .addCase(getRoom.fulfilled, getRoomFulfilled)
+      .addCase(getRoom.rejected, getRoomRejected);
+  }
 });
 
-export const { setContacts, setShowNewRoomSection, setSelectedRoomUser } = channelSlice.actions;
+export const {
+  setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom
+} = channelSlice.actions;
 
 export const selectChannel = state => state.channel;
 
@@ -51,6 +76,21 @@ export const selectIsShowingNewRoomSection = createSelector(
 export const selectAvailableRooms = createSelector(
   [selectChannel],
   (channel) => channel.availableRooms
+);
+
+export const selectCurrentRoom = createSelector(
+  [selectChannel],
+  (channel) => channel.currentRoom
+);
+
+export const isLoading = createSelector(
+  [selectChannel],
+  (channel) => channel.loading
+);
+
+export const selectError = createSelector(
+  [selectChannel],
+  (channel) => channel.error
 );
 
 export default channelSlice.reducer;
