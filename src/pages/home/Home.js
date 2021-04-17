@@ -3,7 +3,7 @@ import { Card, Select, Typography, Button, Space, Row, Col } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {selectUserName, setName} from '../../redux/user/userSlice';
-import {selectContacts, setContacts} from '../../redux/contacts/contactsSlice';
+import {selectContacts, setContacts} from '../../redux/channel/channelSlice.reducer';
 
 import ROUTES_CONSTANTS from '../routes.constants';
 
@@ -15,7 +15,7 @@ const { Title } = Typography;
 function HomePage({ history }) {
     const dispatch = useDispatch();
 
-    const user = useSelector(selectUserName);
+    const userName = useSelector(selectUserName);
     const contacts = useSelector(selectContacts);
 
     function onChange(value) {
@@ -26,7 +26,7 @@ function HomePage({ history }) {
     function handleSubmit(event) {
         event.preventDefault();
 
-        const newContacts = contacts.filter(item => item.name !== user);
+        const newContacts = contacts.filter(item => item.name !== userName);
         dispatch(setContacts(newContacts))
 
         history.push(ROUTES_CONSTANTS.CHAT);
@@ -50,7 +50,7 @@ function HomePage({ history }) {
                             style={{
                                 width: '100%',
                             }}
-                            value={user}
+                            value={userName}
                         >
                             {contacts.map(contact => (
                                 <Option value={contact.token}>{contact.name}</Option>
@@ -61,7 +61,7 @@ function HomePage({ history }) {
                             <Col>
                                 <Button
                                     type="primary"
-                                    disabled={!user}
+                                    disabled={!userName}
                                     htmlType="submit"
                                 >
                                     Confirmar
