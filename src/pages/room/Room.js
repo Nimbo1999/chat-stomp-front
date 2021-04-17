@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Layout, PageHeader, Button, Spin } from 'antd';
+import { useSelector, useDispatch, batch } from 'react-redux';
+import { Layout, PageHeader, Button, Spin, message } from 'antd';
 
-import { selectCurrentRoom, setCurrentRoom } from '../../redux/channel/channelSlice.reducer';
+import { selectCurrentRoom, setCurrentRoom, isLoading, respondToCloseRoom } from '../../redux/channel/channelSlice.reducer';
+import closeRoomAction from '../../redux/channel/closeRoom.action';
 import getRoomAction from '../../redux/channel/getRoom.action';
 
 import ROUTES_CONSTANTS from '../routes.constants';
@@ -17,6 +18,7 @@ function RoomPage({ history, match }) {
     const dispatch = useDispatch();
 
     const currentRoom = useSelector(selectCurrentRoom);
+    const loading = useSelector(isLoading);
 
     useEffect(() => {
         dispatch(getRoomAction(token));
@@ -27,13 +29,33 @@ function RoomPage({ history, match }) {
         history.replace(ROUTES_CONSTANTS.CHAT);
     }
 
+    function closeRoom() {
+        batch(() => {
+            dispatch(respondToCloseRoom());
+
+            dispatch(closeRoomAction(() => {
+                message.success('Bate-papo encerrado com sucesso!');
+                history.replace(ROUTES_CONSTANTS.CHAT);
+            }));
+        });
+    }
+
     if (currentRoom && currentRoom.recipient) return (
         <Layout>
             <PageHeader
                 onBack={onGoBack}
                 title={currentRoom.recipient.name}
                 subTitle={currentRoom.recipient.status}
-                extra={<Button type="link">Encerrar bate-papo</Button>}
+                extra={(
+                    <Button
+                        type="link"
+                        onClick={closeRoom}
+                        htmlType="button"
+                        loading={loading}
+                    >
+                        Encerrar bate-papo
+                    </Button>
+                )}
                 style={{ background: '#ffffff' }}
             />
             <RoomContent>

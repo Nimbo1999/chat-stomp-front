@@ -2,6 +2,7 @@ import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 import createRoom, { createRoomFulfilled, createRoomPending, createRoomRejected } from './createRoom.action';
 import getRoom, { getRoomPending, getRoomFulfilled, getRoomRejected } from './getRoom.action';
+import closeRoom, { closeRoomPending, closeRoomFulfilled, closeRoomRejected } from './closeRoom.action';
 import contacts from '../../mock/contacts.mock';
 
 const initialState = {
@@ -39,7 +40,17 @@ export const channelSlice = createSlice({
     setCurrentRoom: (state, action) => ({
       ...state,
       currentRoom: action.payload,
-    })
+    }),
+    respondToCloseRoom: (state) => {
+      const newAvailableRooms = [
+        ...state.availableRooms.filter(room => room !== state.currentRoom.token)
+      ];
+
+      return {
+        ...state,
+        availableRooms: newAvailableRooms,
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -48,12 +59,16 @@ export const channelSlice = createSlice({
       .addCase(createRoom.rejected, createRoomRejected)
       .addCase(getRoom.pending, getRoomPending)
       .addCase(getRoom.fulfilled, getRoomFulfilled)
-      .addCase(getRoom.rejected, getRoomRejected);
+      .addCase(getRoom.rejected, getRoomRejected)
+      .addCase(closeRoom.pending, closeRoomPending)
+      .addCase(closeRoom.fulfilled, closeRoomFulfilled)
+      .addCase(closeRoom.rejected, closeRoomRejected);
   }
 });
 
 export const {
-  setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom
+  setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom,
+  respondToCloseRoom
 } = channelSlice.actions;
 
 export const selectChannel = state => state.channel;
