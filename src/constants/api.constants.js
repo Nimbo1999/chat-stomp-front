@@ -15,6 +15,12 @@ export const API_CONSTANTS = {
 
     },
 
+    MESSAGES: {
+
+        ROOT: '/messages',
+
+    },
+
     WEB_SOCKET: {
 
         ROOT: '/ws',

@@ -5,7 +5,6 @@ import { List, Avatar, Typography, Button, Row, Col, Alert } from 'antd';
 import {MessageTwoTone} from '@ant-design/icons';
 
 import { closeError, setShowNewRoomSection } from '../../redux/channel/channel.reducer';
-import getRoom from '../../redux/channel/getRoom.action';
 import {
     selectError, selectCurrentRoom, selectAvailableRooms
 } from '../../redux/channel/channel.selector';
@@ -36,12 +35,6 @@ function ChatPage() {
 
     function onSelectRoom(token) {
         history.push(ROUTES_CONSTANTS.CHAT + ROUTES_CONSTANTS.URL_PARAM(token));
-        // dispatch(
-        //     getRoom({
-        //         roomToken: token,
-        //         onSuccess: () => history.push(ROUTES_CONSTANTS.CHAT + ROUTES_CONSTANTS.URL_PARAM(token))
-        //     })
-        // );
     }
 
     function showCreationRoomCard() {

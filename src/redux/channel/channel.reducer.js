@@ -52,6 +52,13 @@ const channelSlice = createSlice({
         availableRooms: newAvailableRooms,
       }
     },
+    insertIncomingMessage: (state, action) => ({
+        ...state,
+        currentRoom: {
+            ...state.currentRoom,
+            messages: action.payload
+        }
+    })
   },
   extraReducers: (builder) => {
     builder
@@ -72,7 +79,7 @@ const channelSlice = createSlice({
 
 export const {
   setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom,
-  respondToCloseRoom
+  respondToCloseRoom, insertIncomingMessage
 } = channelSlice.actions;
 
 export default channelSlice.reducer;
