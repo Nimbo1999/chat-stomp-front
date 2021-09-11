@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { message } from 'antd';
 import { useSelector } from 'react-redux';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
@@ -7,7 +8,7 @@ import { selectUserToken } from '../redux/user/userSlice.reducer';
 import { selectCurrentRoom } from '../redux/channel/channel.reducer';
 
 import { API_CONSTANTS } from '../constants/api.constants';
-import { MESSAGE_STATUS } from '../constants/message';
+// import { MESSAGE_STATUS } from '../constants/message';
 
 const StompClientContext = createContext({});
 
@@ -21,10 +22,12 @@ const StompClientContextProvider = ({ children }) => {
     const [textMessage, setTextMessage] = useState('');
     const [error, setError] = useState('');
 
-    const onReceiveMessage = message => {
-        console.log('onReceiveMessage');
+    const onReceiveMessage = stompMessage => {
+        const { body } = stompMessage;
 
-        console.log({ message });
+        const payload = JSON.parse(body);
+
+        message.info(`Nova mensagem de ${payload.senderName}`);
     }
 
     const onConnected = stompFrame => {
@@ -53,9 +56,7 @@ const StompClientContextProvider = ({ children }) => {
         const message = {
             roomToken: currentRoom.token,
             content: textMessage,
-            type: 'TEXT',
-            timestamp: new Date(),
-            status: MESSAGE_STATUS.DELIVERED
+            type: 'TEXT'
         };
 
         stompClient.send('/app/chat', {}, JSON.stringify(message));
