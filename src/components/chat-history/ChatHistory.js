@@ -6,9 +6,11 @@ import { ChatHistoryWrapper } from './styled.chatHistory';
 import MESSAGES from '../../mock/messages.mock';
 
 function ChatHistory() {
+    const mensagens = MESSAGES;
+
     return (
         <ChatHistoryWrapper
-            dataSource={MESSAGES}
+            dataSource={mensagens}
             renderItem={item => (
                 <Message
                     key={item.userToken}

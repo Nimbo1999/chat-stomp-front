@@ -1,0 +1,4 @@
+export const MESSAGE_STATUS = {
+    DELIVERED: 'DELIVERED',
+    RECEIVED: 'RECEIVED',
+}

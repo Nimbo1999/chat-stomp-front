@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
-import { Input, Button } from 'antd';
+import React from 'react';
+import { Input, Button, Alert } from 'antd';
 
-import CommentaryWrapper from './styled.commentary';
+import { CommentaryWrapper, Container } from './styled.commentary';
+import { useStompProvider } from '../../context/StompClient';
 
 const { TextArea } = Input;
 
 function CommentaryInput() {
-    const [text, setText] = useState();
 
-    function handleChange({target: { value } }) {
-        setText(value);
-    }
+    const { onSubmitMessage, handleOnChangeMessage, textMessage, error} = useStompProvider();
 
     return (
-        <CommentaryWrapper>
+        <Container>
 
-            <TextArea placeholder="Mensagem..." autoSize onChange={handleChange} value={text} size="large" />
+            {error && (
+                <Alert message={ error } type="error" />
+            )}
 
-            <Button type="primary" htmlType="submit" size="large">Enviar</Button>
+            <CommentaryWrapper onSubmit={ onSubmitMessage }>
 
-        </CommentaryWrapper>
+                <TextArea
+                    placeholder="Mensagem..."
+                    size="large"
+                    onChange={ handleOnChangeMessage }
+                    value={ textMessage }
+                    autoSize
+                />
+
+                <Button type="primary" htmlType="submit" size="large">
+                    Enviar
+                </Button>
+
+            </CommentaryWrapper>
+        </Container>
     );
 }
 

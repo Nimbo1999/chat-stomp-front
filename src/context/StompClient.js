@@ -4,15 +4,22 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
+import { selectCurrentRoom } from '../redux/channel/channel.reducer';
 
 import { API_CONSTANTS } from '../constants/api.constants';
+import { MESSAGE_STATUS } from '../constants/message';
 
 const StompClientContext = createContext({});
 
 const StompClientContextProvider = ({ children }) => {
 
     const userToken = useSelector(selectUserToken);
+    const currentRoom = useSelector(selectCurrentRoom);
+
     const [stompClient, setStompClient] = useState(null);
+
+    const [textMessage, setTextMessage] = useState('');
+    const [error, setError] = useState('');
 
     const onReceiveMessage = message => {
         console.log('onReceiveMessage');
@@ -21,12 +28,6 @@ const StompClientContextProvider = ({ children }) => {
     }
 
     const onConnected = stompFrame => {
-        console.log('CONNECTED TO STOMP!!!!!');
-        console.log('CONNECTED TO STOMP!!!!!');
-        console.log('CONNECTED TO STOMP!!!!!');
-        console.log('CONNECTED TO STOMP!!!!!');
-        console.log({ stompFrame, stompClient });
-
         stompClient.subscribe(
             API_CONSTANTS.WEB_SOCKET.USER +
             API_CONSTANTS.URL_PARAM(userToken) +
@@ -42,6 +43,31 @@ const StompClientContextProvider = ({ children }) => {
         );
 
         setStompClient(Stomp.over(socketConnection));
+    }
+
+    const onSubmitMessage = event => {
+        event.preventDefault();
+
+        if (!textMessage) setError('Esse campo é obrigatório!');
+
+        const message = {
+            roomToken: currentRoom.token,
+            content: textMessage,
+            type: 'TEXT',
+            timestamp: new Date(),
+            status: MESSAGE_STATUS.DELIVERED
+        };
+
+        stompClient.send('/app/chat', {}, JSON.stringify(message));
+
+        setTextMessage('');
+    }
+
+    const handleOnChangeMessage = ({ target }) => {
+        const { value } = target;
+
+        setError('');
+        setTextMessage(value.trimStart());
     }
 
     useEffect(() => {
@@ -63,7 +89,14 @@ const StompClientContextProvider = ({ children }) => {
     }, [stompClient]);
 
     return (
-        <StompClientContext.Provider>
+        <StompClientContext.Provider
+            value={{
+                onSubmitMessage,
+                handleOnChangeMessage,
+                textMessage,
+                error
+            }}
+        >
             {children}
         </StompClientContext.Provider>
     );
