@@ -6,9 +6,10 @@ import ROUTES_CONSTANTS from '../../pages/routes.constants';
 
 import createNewRoomAction from '../../redux/channel/createRoom.action';
 import {
-    selectContacts, selectIsShowingNewRoomSection, setShowNewRoomSection, setSelectedRoomUser,
+    selectContacts, selectIsShowingNewRoomSection,
     selectedRoomUser, isLoading
-} from '../../redux/channel/channel.reducer';
+} from '../../redux/channel/channel.selector';
+import { setShowNewRoomSection, setSelectedRoomUser } from '../../redux/channel/channel.reducer';
 
 import { Card, Select, Button, message } from 'antd';
 

@@ -3,7 +3,8 @@ import { Card, Select, Typography, Button, Space, Row, Col } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { selectUserName, setName } from '../../redux/user/userSlice.reducer';
-import { selectContacts, setContacts } from '../../redux/channel/channel.reducer';
+import { setContacts } from '../../redux/channel/channel.reducer';
+import { selectContacts } from '../../redux/channel/channel.selector';
 
 import ROUTES_CONSTANTS from '../routes.constants';
 

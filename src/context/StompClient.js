@@ -5,7 +5,7 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
-import { selectCurrentRoom } from '../redux/channel/channel.reducer';
+import { selectCurrentRoom } from '../redux/channel/channel.selector';
 
 import { API_CONSTANTS } from '../constants/api.constants';
 // import { MESSAGE_STATUS } from '../constants/message';

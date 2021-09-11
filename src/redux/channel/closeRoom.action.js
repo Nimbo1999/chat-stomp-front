@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import {API_CONSTANTS} from '../../constants/api.constants';
-import {selectCurrentRoom} from './channel.reducer';
+import { selectCurrentRoom } from './channel.selector';
 
 import HttpService from '../../services/HttpService';
 

@@ -4,10 +4,10 @@ import { Switch } from 'react-router-dom';
 import { List, Avatar, Typography, Button, Row, Col, Alert } from 'antd';
 import {MessageTwoTone} from '@ant-design/icons';
 
+import { closeError, setShowNewRoomSection, setCurrentRoom } from '../../redux/channel/channel.reducer';
 import {
-    selectError, setShowNewRoomSection, closeError, setCurrentRoom, selectAvailableRooms,
-    selectCurrentRoom
-} from '../../redux/channel/channel.reducer';
+    selectError, selectCurrentRoom, selectAvailableRooms
+} from '../../redux/channel/channel.selector';
 
 import {AppRoute} from '../routes';
 import ROUTES_CONSTANTS from '../routes.constants'

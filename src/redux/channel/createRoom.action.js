@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import {API_CONSTANTS} from '../../constants/api.constants';
+import { API_CONSTANTS } from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
 import HttpService from '../../services/HttpService';
-import {selectUser} from '../user/userSlice.reducer';
-import {selectedRoomUser} from './channel.reducer';
+import { selectUser } from '../user/userSlice.reducer';
+import { selectedRoomUser } from './channel.selector';
 
 const createRoom = createAsyncThunk('channel/createRoom', async (onSuccess, {getState, rejectWithValue}) => {
     const http = new HttpService();

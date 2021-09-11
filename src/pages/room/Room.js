@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch, batch } from 'react-redux';
 import { Layout, PageHeader, Button, Spin, message } from 'antd';
 
-import { selectCurrentRoom, setCurrentRoom, isLoading, respondToCloseRoom } from '../../redux/channel/channel.reducer';
+import { respondToCloseRoom, setCurrentRoom } from '../../redux/channel/channel.reducer';
+import { selectCurrentRoom, isLoading } from '../../redux/channel/channel.selector';
 import closeRoomAction from '../../redux/channel/closeRoom.action';
 import getRoomAction from '../../redux/channel/getRoom.action';
 
