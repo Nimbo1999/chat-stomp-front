@@ -4,8 +4,8 @@ import {API_CONSTANTS} from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
 import HttpService from '../../services/HttpService';
-import {selectUser} from '../user/userSlice';
-import {selectedRoomUser} from './channelSlice.reducer';
+import {selectUser} from '../user/userSlice.reducer';
+import {selectedRoomUser} from './channel.reducer';
 
 const createRoom = createAsyncThunk('channel/createRoom', async (onSuccess, {getState, rejectWithValue}) => {
     const http = new HttpService();

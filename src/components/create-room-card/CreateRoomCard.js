@@ -8,7 +8,7 @@ import createNewRoomAction from '../../redux/channel/createRoom.action';
 import {
     selectContacts, selectIsShowingNewRoomSection, setShowNewRoomSection, setSelectedRoomUser,
     selectedRoomUser, isLoading
-} from '../../redux/channel/channelSlice.reducer';
+} from '../../redux/channel/channel.reducer';
 
 import { Card, Select, Button, message } from 'antd';
 

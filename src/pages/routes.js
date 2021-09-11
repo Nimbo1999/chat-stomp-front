@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { selectUserName } from '../redux/user/userSlice';
+import { selectUserName } from '../redux/user/userSlice.reducer';
 
 import HomePage from './home/Home';
 import ChatPage from './chat/Chat';

@@ -15,6 +15,7 @@ ReactDOM.render(
 	<React.StrictMode>
 		<ThemeProvider theme={theme}>
 			<GlobalStyles />
+
 			<Provider store={store}>
 				<BrowserRouter>
 					<Suspense fallback={<div>Loading...</div>}>

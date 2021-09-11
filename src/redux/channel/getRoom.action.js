@@ -4,6 +4,7 @@ import {API_CONSTANTS} from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
 import HttpService from '../../services/HttpService';
+import initializeStompConnection from '../../services/WebSocketService'
 
 const getRoom = createAsyncThunk('channel/getRoom', async (roomToken, {rejectWithValue}) => {
     const http = new HttpService();
@@ -15,6 +16,8 @@ const getRoom = createAsyncThunk('channel/getRoom', async (roomToken, {rejectWit
             API_CONSTANTS.ROOM.CONTENT;
 
         const room = await http.get(url);
+
+        initializeStompConnection();
 
         return roomAdapter.getRoom(room);
     } catch(err) {

@@ -7,7 +7,7 @@ import {MessageTwoTone} from '@ant-design/icons';
 import {
     selectError, setShowNewRoomSection, closeError, setCurrentRoom, selectAvailableRooms,
     selectCurrentRoom
-} from '../../redux/channel/channelSlice.reducer';
+} from '../../redux/channel/channel.reducer';
 
 import {AppRoute} from '../routes';
 import ROUTES_CONSTANTS from '../routes.constants'
@@ -16,6 +16,8 @@ import RoomPage from '../room/Room';
 import EmptyPage from '../empty/Empty';
 
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
+
+import { withStompClient } from '../../context/StompClient';
 
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.chat';
 import { useTheme } from 'styled-components';
@@ -115,4 +117,4 @@ function ChatPage({ history }) {
     );
 }
 
-export default ChatPage;
+export default withStompClient(ChatPage);

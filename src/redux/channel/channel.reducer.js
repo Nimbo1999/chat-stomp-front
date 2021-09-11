@@ -6,18 +6,18 @@ import closeRoom, { closeRoomPending, closeRoomFulfilled, closeRoomRejected } fr
 import contacts from '../../mock/contacts.mock';
 
 const initialState = {
-  contacts,
-  availableRooms: [],
-  currentRoom: null,
-  isShowingNewRoomSection: false,
-  selectedRoomUser: {
-    token: ''
-  },
-  loading: false,
-  error: null
+    contacts,
+    availableRooms: [],
+    currentRoom: null,
+    isShowingNewRoomSection: false,
+    selectedRoomUser: {
+        token: ''
+    },
+    loading: false,
+    error: null
 };
 
-export const channelSlice = createSlice({
+const channelSlice = createSlice({
   name: 'channel',
   initialState,
   reducers: {

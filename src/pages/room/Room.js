@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch, batch } from 'react-redux';
 import { Layout, PageHeader, Button, Spin, message } from 'antd';
 
-import { selectCurrentRoom, setCurrentRoom, isLoading, respondToCloseRoom } from '../../redux/channel/channelSlice.reducer';
+import { selectCurrentRoom, setCurrentRoom, isLoading, respondToCloseRoom } from '../../redux/channel/channel.reducer';
 import closeRoomAction from '../../redux/channel/closeRoom.action';
 import getRoomAction from '../../redux/channel/getRoom.action';
 
@@ -14,7 +14,8 @@ import CommentaryInput from '../../components/commentary/CommentaryInput';
 import { RoomContent, LoadingRoomWrapper } from './styled.room';
 
 function RoomPage({ history, match }) {
-    const {params: { token }} = match;
+    const { params: { token } } = match;
+
     const dispatch = useDispatch();
 
     const currentRoom = useSelector(selectCurrentRoom);
@@ -58,8 +59,10 @@ function RoomPage({ history, match }) {
                 )}
                 style={{ background: '#ffffff' }}
             />
+
             <RoomContent>
                 <ChatHistory />
+
                 <CommentaryInput />
             </RoomContent>
         </Layout>

@@ -6,7 +6,7 @@ const initialState = {
 	status: ''
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
@@ -21,6 +21,11 @@ export const selectUser = state => state.user;
 export const selectUserName = createSelector(
 	[selectUser],
 	user => user.name
+);
+
+export const selectUserToken = createSelector(
+	[selectUser],
+	user => user.token
 );
 
 export default userSlice.reducer;

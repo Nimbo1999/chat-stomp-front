@@ -13,5 +13,17 @@ export const API_CONSTANTS = {
 
     },
 
+    WEB_SOCKET: {
+
+        ROOT: '/ws',
+
+        USER: '/user',
+
+        QUEUE: '/queue',
+
+        MESSAGES: '/messages',
+
+    },
+
     URL_PARAM: param => `/${param}`,
 }
