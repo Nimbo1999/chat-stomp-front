@@ -7,7 +7,8 @@ import HttpService from '../../services/HttpService';
 
 const closeRoom = createAsyncThunk('channel/closeRoom', async (onSuccess, {getState, rejectWithValue}) => {
     const http = new HttpService();
-    const {token} = selectCurrentRoom(getState());
+
+    const { token } = selectCurrentRoom(getState());
 
     try {
         const url =
@@ -16,6 +17,7 @@ const closeRoom = createAsyncThunk('channel/closeRoom', async (onSuccess, {getSt
             API_CONSTANTS.ROOM.CLOSE;
 
         await http.post({}, url);
+
         if (onSuccess) onSuccess();
         return;
     } catch(err) {
