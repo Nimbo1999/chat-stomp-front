@@ -5,7 +5,7 @@ import roomAdapter from '../../adapters/room.adapter';
 
 import HttpService from '../../services/HttpService';
 
-const getRoom = createAsyncThunk('channel/getRoom', async (roomToken, {rejectWithValue}) => {
+const getRoom = createAsyncThunk('channel/getRoom', async ({ roomToken, onSuccess }, {rejectWithValue}) => {
     const http = new HttpService();
 
     try {
@@ -15,6 +15,8 @@ const getRoom = createAsyncThunk('channel/getRoom', async (roomToken, {rejectWit
             API_CONSTANTS.ROOM.CONTENT;
 
         const room = await http.get(url);
+
+        if (onSuccess && typeof onSuccess === 'function') onSuccess(room);
 
         return roomAdapter.getRoom(room);
     } catch(err) {
@@ -27,6 +29,7 @@ export function getRoomPending(state) {
         ...state,
         loading: true,
         error: null,
+        currentRoom: null
     }
 }
 

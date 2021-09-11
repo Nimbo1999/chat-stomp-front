@@ -23,7 +23,7 @@ function RoomPage({ history, match }) {
     const loading = useSelector(isLoading);
 
     useEffect(() => {
-        dispatch(getRoomAction(token));
+        dispatch(getRoomAction({ roomToken: token }));
     }, [token, dispatch]);
 
     function onGoBack() {

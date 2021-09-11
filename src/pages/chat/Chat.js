@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Switch } from 'react-router-dom';
+import { Switch, useHistory } from 'react-router-dom';
 import { List, Avatar, Typography, Button, Row, Col, Alert } from 'antd';
 import {MessageTwoTone} from '@ant-design/icons';
 
-import { closeError, setShowNewRoomSection, setCurrentRoom } from '../../redux/channel/channel.reducer';
+import { closeError, setShowNewRoomSection } from '../../redux/channel/channel.reducer';
+import getRoom from '../../redux/channel/getRoom.action';
 import {
     selectError, selectCurrentRoom, selectAvailableRooms
 } from '../../redux/channel/channel.selector';
@@ -24,16 +25,23 @@ import { useTheme } from 'styled-components';
 
 const {Title} = Typography;
 
-function ChatPage({ history }) {
+function ChatPage() {
     const dispatch = useDispatch();
+    const history = useHistory();
+
     const error = useSelector(selectError);
     const availableRooms = useSelector(selectAvailableRooms);
     const currentRoom = useSelector(selectCurrentRoom);
     const theme = useTheme();
 
     function onSelectRoom(token) {
-        dispatch(setCurrentRoom({ token }));
-        history.push(`${ROUTES_CONSTANTS.CHAT}${ROUTES_CONSTANTS.URL_PARAM(token)}`);
+        history.push(ROUTES_CONSTANTS.CHAT + ROUTES_CONSTANTS.URL_PARAM(token));
+        // dispatch(
+        //     getRoom({
+        //         roomToken: token,
+        //         onSuccess: () => history.push(ROUTES_CONSTANTS.CHAT + ROUTES_CONSTANTS.URL_PARAM(token))
+        //     })
+        // );
     }
 
     function showCreationRoomCard() {
@@ -47,10 +55,10 @@ function ChatPage({ history }) {
                     style={{ padding: '16px 24px' }}
                     header={<Title level={3}>Contatos</Title>}
                     dataSource={availableRooms}
-                    renderItem={item => (
-                        <ItemWrapper key={item} onClick={() => onSelectRoom(item)}>
+                    renderItem={({ token, name }) => (
+                        <ItemWrapper key={token} onClick={() => onSelectRoom(token)}>
                             <List.Item style={{
-                                background: currentRoom && currentRoom.token === item
+                                background: currentRoom && currentRoom.token === token
                                     ? theme.pallet.lightBlue
                                     : theme.pallet.white
                             }}>
@@ -63,7 +71,7 @@ function ChatPage({ history }) {
                                             }}
                                         />
                                     }
-                                    title={item}
+                                    title={ name }
                                 />
                             </List.Item>
                         </ItemWrapper>

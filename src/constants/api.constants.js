@@ -11,6 +11,8 @@ export const API_CONSTANTS = {
 
         CONTENT: '/content',
 
+        USERS: '/users',
+
     },
 
     WEB_SOCKET: {

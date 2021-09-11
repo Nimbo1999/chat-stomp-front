@@ -14,15 +14,21 @@ const roomAdapter = {
         };
     },
 
-    getRoom: ({ room }) => ({
+    getRoom: ({ room, messages }) => ({
+        token: room.token,
+        startedOn: room.startedOn,
+        closedOn: room.closedOn,
+        messages,
         recipient: {
             token: room.recipient.token,
             name: room.recipient.name,
             status: room.recipient.color,
         },
-        startedOn: room.startedOn,
-        closedOn: room.closedOn,
     }),
+
+    getUserAvailablesRooms: rooms => {
+        return rooms.map(({ token, recipient }) => ({ token, name: recipient.name }));
+    }
 
 }
 

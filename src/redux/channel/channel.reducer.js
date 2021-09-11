@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import createRoom, { createRoomFulfilled, createRoomPending, createRoomRejected } from './createRoom.action';
 import getRoom, { getRoomPending, getRoomFulfilled, getRoomRejected } from './getRoom.action';
 import closeRoom, { closeRoomPending, closeRoomFulfilled, closeRoomRejected } from './closeRoom.action';
+import getUserAvailablesRooms, { getUserAvailablesRoomsPending, getUserAvailablesRoomsFulfilled, getUserAvailablesRoomsRejected } from './getUserAvailablesRooms.action';
 import contacts from '../../mock/contacts.mock';
 
 const initialState = {
@@ -62,7 +63,10 @@ const channelSlice = createSlice({
       .addCase(getRoom.rejected, getRoomRejected)
       .addCase(closeRoom.pending, closeRoomPending)
       .addCase(closeRoom.fulfilled, closeRoomFulfilled)
-      .addCase(closeRoom.rejected, closeRoomRejected);
+      .addCase(closeRoom.rejected, closeRoomRejected)
+      .addCase(getUserAvailablesRooms.pending, getUserAvailablesRoomsPending)
+      .addCase(getUserAvailablesRooms.fulfilled, getUserAvailablesRoomsFulfilled)
+      .addCase(getUserAvailablesRooms.rejected, getUserAvailablesRoomsRejected);
   }
 });
 

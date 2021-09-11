@@ -1,18 +1,20 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { message } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
+
+import getUserAvailablesRooms from '../redux/channel/getUserAvailablesRooms.action';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import { selectCurrentRoom } from '../redux/channel/channel.selector';
 
 import { API_CONSTANTS } from '../constants/api.constants';
-// import { MESSAGE_STATUS } from '../constants/message';
 
 const StompClientContext = createContext({});
 
 const StompClientContextProvider = ({ children }) => {
+    const dispatch = useDispatch();
 
     const userToken = useSelector(selectUserToken);
     const currentRoom = useSelector(selectCurrentRoom);
@@ -88,6 +90,10 @@ const StompClientContextProvider = ({ children }) => {
         }
 
     }, [stompClient]);
+
+    useEffect(() => {
+        dispatch(getUserAvailablesRooms());
+    }, []);
 
     return (
         <StompClientContext.Provider
