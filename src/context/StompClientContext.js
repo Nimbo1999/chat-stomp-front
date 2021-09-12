@@ -59,7 +59,6 @@ const StompClientContextProvider = ({ children }) => {
          * @type {Stomp.Client}
          */
         const client = stompClient;
-        client.send()
     }
 
     const send = payload => {

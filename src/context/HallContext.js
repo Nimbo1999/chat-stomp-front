@@ -22,10 +22,9 @@ const HallContextProvider = ({ children }) => {
     const showMessageToasty = senderName => message.info(`Nova mensagem de ${senderName}`);
 
     const incomingMessageHandler = async payload => {
-        showMessageToasty(payload.senderName);
-        console.log({ payload });
-
         if (currentRoomToken === payload.token) return;
+
+        showMessageToasty(payload.senderName);
 
         return dispatch(newMessageOnRoom(payload.token));
     }
@@ -46,15 +45,16 @@ const HallContextProvider = ({ children }) => {
             );
         }
 
-        if (subscription) {
-            console.log({ subscription, message: 'Hall subscription atual' });
-        }
-
-        return () => {
-            console.log('unMount of HallContext');
-        }
-
     }, [subscription, connected]);
+
+    useEffect(() => {
+
+        if (subscription && subscription.unsubscribe) {
+            subscription.unsubscribe();
+            setSubscription(null);
+        }
+
+    }, [currentRoomToken]);
 
     const getAvailableRooms = () => dispatch(getUserAvailablesRooms());
 

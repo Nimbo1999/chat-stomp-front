@@ -82,17 +82,14 @@ const RoomContextProvider = ({ children }) => {
         if (!currentRoomToken || !currentRoomRecipientToken) return;
 
         if (!subscription) {
-            setSubscription(
+            return setSubscription(
                 addRoomSubscriber(currentRoomRecipientToken, currentRoomToken, onReceiveMessage)
             );
         }
 
-        if (subscription) {
-            console.log({ subscription, message: 'Room subscription atual' });
-        }
-
         return () => {
-            console.log('unMount of RoomContext');
+            subscription.unsubscribe();
+            setSubscription(null);
         }
 
     }, [subscription, currentRoomToken]);
