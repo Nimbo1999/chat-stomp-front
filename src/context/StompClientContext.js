@@ -116,12 +116,12 @@ const StompClientContextProvider = ({ children }) => {
  *  send: (payload: { roomToken: string, content: string, type: 'TEXT' | 'IMAGE' }) => void
  * }}
  */
-const useStompProvider = () => useContext(StompClientContext);
+const useStompClientContext = () => useContext(StompClientContext);
 
-const withStompClient = Component => () => (
+const withStompClientContext = Component => () => (
 	<StompClientContextProvider>
 		<Component />
 	</StompClientContextProvider>
 );
 
-export { useStompProvider, withStompClient }
+export { useStompClientContext, withStompClientContext }

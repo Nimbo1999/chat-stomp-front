@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Switch, useHistory } from 'react-router-dom';
-import { List, Avatar, Typography, Button, Row, Col, Alert } from 'antd';
+import { List, Avatar, Typography, Button, Row, Col, Alert, Badge } from 'antd';
 import {MessageTwoTone} from '@ant-design/icons';
 
-import { closeError, setShowNewRoomSection } from '../../redux/channel/channel.reducer';
+import { closeError, setShowNewRoomSection, removeBadges } from '../../redux/channel/channel.reducer';
 import {
     selectError, selectCurrentRoom, selectAvailableRooms
 } from '../../redux/channel/channel.selector';
@@ -18,13 +18,13 @@ import EmptyPage from '../empty/Empty';
 
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
 
-import { withStompClient } from '../../context/StompClient';
+import { withStompClientContext } from '../../context/StompClientContext';
 import { withHallContext } from '../../context/HallContext';
 
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.hall';
 import { useTheme } from 'styled-components';
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 function HallPage() {
     const dispatch = useDispatch();
@@ -37,6 +37,8 @@ function HallPage() {
     const user = useSelector(selectUser);
 
     function onSelectRoom(token) {
+        dispatch(removeBadges(token));
+
         history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
     }
 
@@ -59,26 +61,31 @@ function HallPage() {
                     style={{ padding: '16px 24px' }}
                     header={<Title level={5}>Bem Vindo, {user.name}</Title>}
                     dataSource={availableRooms}
-                    renderItem={({ token, sender, recipient }) => (
-                        <ItemWrapper key={token} onClick={() => onSelectRoom(token)}>
-                            <List.Item style={{
-                                background: currentRoom && currentRoom.token === token
-                                    ? theme.pallet.lightBlue
-                                    : theme.pallet.white
-                            }}>
-                                <List.Item.Meta
-                                    avatar={
-                                        <Avatar
-                                            icon={<MessageTwoTone />}
-                                            style={{
-                                                backgroundColor: 'transparent',
-                                            }}
-                                        />
-                                    }
-                                    title={ getRoomTitle(sender, recipient) }
-                                />
-                            </List.Item>
-                        </ItemWrapper>
+                    renderItem={({ token, sender, recipient, badge }) => (
+                            <ItemWrapper key={token} onClick={() => onSelectRoom(token)}>
+                                <List.Item
+                                    style={{
+                                        background: currentRoom && currentRoom.token === token
+                                            ? theme.pallet.lightBlue
+                                            : theme.pallet.white
+                                    }}
+
+                                >
+                                    <List.Item.Meta
+                                        avatar={
+                                            <Avatar
+                                                icon={<MessageTwoTone />}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                }}
+                                            />
+                                        }
+                                        title={ getRoomTitle(sender, recipient) }
+                                    />
+
+                                    <Badge count={badge} />
+                                </List.Item>
+                            </ItemWrapper>
                     )}
                     footer={(
                         <Row gutter={[0, 16]}>
@@ -129,4 +136,4 @@ function HallPage() {
     );
 }
 
-export default withStompClient(withHallContext(HallPage));
+export default withStompClientContext(withHallContext(HallPage));

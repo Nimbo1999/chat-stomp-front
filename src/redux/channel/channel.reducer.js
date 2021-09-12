@@ -73,6 +73,44 @@ const channelSlice = createSlice({
                 messages: [ action.payload ]
             }
         }
+    },
+    newMessageOnRoom: (state, action) => {
+        const currentAvailableRooms = [...state.availableRooms];
+
+        const newAvailableRooms = currentAvailableRooms.map(room => {
+            if (room.token === action.payload) {
+                return {
+                    ...room,
+                    badge: room.badge + 1
+                }
+            }
+
+            return room;
+        });
+
+        return {
+            ...state,
+            availableRooms: newAvailableRooms
+        }
+    },
+    removeBadges: (state, action) => {
+        const currentAvailableRooms = [...state.availableRooms];
+
+        const newAvailableRooms = currentAvailableRooms.map(room => {
+            if (room.token === action.payload) {
+                return {
+                    ...room,
+                    badge: 0
+                }
+            }
+
+            return room;
+        });
+
+        return {
+            ...state,
+            availableRooms: newAvailableRooms
+        }
     }
   },
   extraReducers: (builder) => {
@@ -94,7 +132,7 @@ const channelSlice = createSlice({
 
 export const {
   setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom,
-  respondToCloseRoom, insertMessage
+  respondToCloseRoom, insertMessage, newMessageOnRoom, removeBadges
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

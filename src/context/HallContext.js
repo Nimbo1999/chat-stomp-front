@@ -1,17 +1,21 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { message } from 'antd';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import getUserAvailablesRooms from '../redux/channel/getUserAvailablesRooms.action';
+import { newMessageOnRoom } from '../redux/channel/channel.reducer';
+import { selectCurrentRoomToken } from '../redux/channel/channel.selector';
 
-import { useStompProvider } from './StompClient';
+import { useStompClientContext } from './StompClientContext';
 
 const HallContext = createContext({});
 
 const HallContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
-    const { addHallSubscriber, connected } = useStompProvider();
+    const { addHallSubscriber, connected } = useStompClientContext();
+
+    const currentRoomToken = useSelector(selectCurrentRoomToken);
 
     const [subscription, setSubscription] = useState(null);
 
@@ -19,10 +23,11 @@ const HallContextProvider = ({ children }) => {
 
     const incomingMessageHandler = async payload => {
         showMessageToasty(payload.senderName);
-
-        // TODO: Adicionat função para adicionar um badge a sala que possui uma nova mensagem.
         console.log({ payload });
-        console.log('Adicionar um badge nos envolvidos.');
+
+        if (currentRoomToken === payload.token) return;
+
+        return dispatch(newMessageOnRoom(payload.token));
     }
 
     const onReceiveMessage = stompMessage => {

@@ -5,7 +5,7 @@ import { selectUserToken } from '../redux/user/userSlice.reducer';
 import { selectCurrentRoomToken, selectCurrentRoomRecipientToken } from '../redux/channel/channel.selector';
 import { insertMessage } from '../redux/channel/channel.reducer';
 
-import { useStompProvider } from './StompClient';
+import { useStompClientContext } from './StompClientContext';
 
 import MessagesService from '../services/Messages';
 
@@ -16,7 +16,7 @@ const messagesService = new MessagesService();
 const RoomContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
-    const { send, addRoomSubscriber  } = useStompProvider();
+    const { send, addRoomSubscriber  } = useStompClientContext();
 
     const userToken = useSelector(selectUserToken);
     const currentRoomToken = useSelector(selectCurrentRoomToken);
