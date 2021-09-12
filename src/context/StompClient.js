@@ -6,6 +6,9 @@ import SockJS from 'sockjs-client';
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 
 import { API_CONSTANTS } from '../constants/api.constants';
+import { ACK_VALUES } from '../constants/stomp.constants';
+
+import { getHallSubscriptionId, getRoomSubscriptionId } from '../utils/stomp.utils';
 
 const StompClientContext = createContext({});
 
@@ -15,23 +18,48 @@ const StompClientContextProvider = ({ children }) => {
     const [connected, setConnected] = useState(false);
     const [stompClient, setStompClient] = useState(null);
 
-    const addSubscriber = onReceiveMessage => {
-        const subscription = stompClient.subscribe(
+    const addHallSubscriber = onReceiveMessage => {
+        return subscribe(
             API_CONSTANTS.WEB_SOCKET.USER +
             API_CONSTANTS.URL_PARAM(userToken) +
             API_CONSTANTS.WEB_SOCKET.QUEUE +
-            API_CONSTANTS.WEB_SOCKET.MESSAGES,
-            onReceiveMessage
+            API_CONSTANTS.WEB_SOCKET.ROOMS,
+            onReceiveMessage,
+            {
+                id: getHallSubscriptionId(userToken),
+                ack: ACK_VALUES.AUTO
+            }
         );
-
-        return subscription;
     }
 
+    const addRoomSubscriber = (recipientToken, roomToken, onReceiveMessage) => {
+        return subscribe(
+            API_CONSTANTS.WEB_SOCKET.USER +
+            API_CONSTANTS.URL_PARAM(recipientToken) +
+            API_CONSTANTS.WEB_SOCKET.QUEUE +
+            API_CONSTANTS.WEB_SOCKET.ROOMS +
+            API_CONSTANTS.URL_PARAM(roomToken),
+            onReceiveMessage,
+            {
+                id: getRoomSubscriptionId(userToken, roomToken),
+                ack: ACK_VALUES.AUTO // TODO: Estar a possibilidade da implantação dos valores client, client-individual.
+            }
+        );
+    }
+
+    const subscribe = (destination, callback, header = {}) => {
+        return stompClient.subscribe(destination, callback, header);
+    }
+
+    /**
+     * @todo Adicionar a função para remover a inscrição.
+     */
     const clearSubscriber = onReceiveMessage => {
         /**
          * @type {Stomp.Client}
          */
-        // const client = stompClient;
+        const client = stompClient;
+        client.send()
     }
 
     const send = payload => {
@@ -69,12 +97,25 @@ const StompClientContextProvider = ({ children }) => {
     }, [stompClient]);
 
     return (
-        <StompClientContext.Provider value={{ connected, addSubscriber, send }}>
+        <StompClientContext.Provider value={{
+            connected,
+            addHallSubscriber,
+            addRoomSubscriber,
+            send
+        }}>
             {children}
         </StompClientContext.Provider>
     );
 }
 
+/**
+ * @returns {{
+ *  connected: boolean,
+ *  addHallSubscriber: (onReceiveMessage: void) => Stomp.Subscription,
+ *  addRoomSubscriber: (roomToken: string, onReceiveMessage: void) => Stomp.Subscription,
+ *  send: (payload: { roomToken: string, content: string, type: 'TEXT' | 'IMAGE' }) => void
+ * }}
+ */
 const useStompProvider = () => useContext(StompClientContext);
 
 const withStompClient = Component => () => (

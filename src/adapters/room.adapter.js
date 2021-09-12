@@ -22,12 +22,20 @@ const roomAdapter = {
         recipient: {
             token: room.recipient.token,
             name: room.recipient.name,
-            status: room.recipient.color,
         },
+        sender: {
+            token: room.sender.token,
+            name: room.sender.name,
+        }
     }),
 
     getUserAvailablesRooms: rooms => {
-        return rooms.map(({ token, recipient }) => ({ token, name: recipient.name }));
+        return rooms.map(({ token, recipient, sender }) => ({
+            token,
+            recipient,
+            sender,
+            badge: 0
+        }));
     }
 
 }

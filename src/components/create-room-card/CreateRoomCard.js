@@ -39,7 +39,7 @@ function CreateRoomCard() {
     function onCreateNewRoom() {
         dispatch(createNewRoomAction((roomToken) => {
             message.success('Sala criada com sucesso!');
-            history.push(`${ROUTES_CONSTANTS.CHAT}${ROUTES_CONSTANTS.URL_PARAM(roomToken)}`);
+            history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(roomToken)}`);
         }));
     }
 

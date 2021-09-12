@@ -52,13 +52,28 @@ const channelSlice = createSlice({
         availableRooms: newAvailableRooms,
       }
     },
-    insertIncomingMessage: (state, action) => ({
-        ...state,
-        currentRoom: {
-            ...state.currentRoom,
-            messages: action.payload
+    insertMessage: (state, action) => {
+        if (state.currentRoom && state.currentRoom.messages) {
+            return {
+                ...state,
+                currentRoom: {
+                    ...state.currentRoom,
+                    messages: [
+                        ...state.currentRoom.messages,
+                        action.payload
+                    ]
+                }
+            }
         }
-    })
+
+        return {
+            ...state,
+            currentRoom: {
+                ...state.currentRoom,
+                messages: [ action.payload ]
+            }
+        }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -79,7 +94,7 @@ const channelSlice = createSlice({
 
 export const {
   setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom,
-  respondToCloseRoom, insertIncomingMessage
+  respondToCloseRoom, insertMessage
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

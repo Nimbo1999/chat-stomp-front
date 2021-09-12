@@ -29,7 +29,7 @@ export const API_CONSTANTS = {
 
         QUEUE: '/queue',
 
-        MESSAGES: '/messages',
+        ROOMS: '/rooms',
 
     },
 

@@ -1,20 +1,31 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 import Message from '../message/Message';
 import { ChatWrapper } from './styled.chat';
 
-import MESSAGES from '../../mock/messages.mock';
+import { selectCurrentRoomMessages } from '../../redux/channel/channel.selector';
+import { selectUserToken } from '../../redux/user/userSlice.reducer';
 
 function Chat() {
-    const mensagens = MESSAGES;
+    const messages = useSelector(selectCurrentRoomMessages);
+    const userToken = useSelector(selectUserToken);
+
+    const getMessages = () => {
+        if (messages) {
+            return messages;
+        }
+
+        return [];
+    }
 
     return (
         <ChatWrapper
-            dataSource={mensagens}
+            dataSource={ getMessages() }
             renderItem={item => (
                 <Message
-                    key={item.userToken}
-                    justify={item.userToken === '1' ? 'end' : 'start'}
+                    key={item.token}
+                    justify={item.userToken === userToken ? 'end' : 'start'}
                     text={item.text}
                     date={item.date}
                 />

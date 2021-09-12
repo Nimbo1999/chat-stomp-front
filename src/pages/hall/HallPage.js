@@ -8,6 +8,7 @@ import { closeError, setShowNewRoomSection } from '../../redux/channel/channel.r
 import {
     selectError, selectCurrentRoom, selectAvailableRooms
 } from '../../redux/channel/channel.selector';
+import { selectUser } from '../../redux/user/userSlice.reducer';
 
 import {AppRoute} from '../routes';
 import ROUTES_CONSTANTS from '../routes.constants'
@@ -23,23 +24,32 @@ import { withHallContext } from '../../context/HallContext';
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.hall';
 import { useTheme } from 'styled-components';
 
-const {Title} = Typography;
+const { Title, Paragraph } = Typography;
 
 function HallPage() {
     const dispatch = useDispatch();
     const history = useHistory();
+    const theme = useTheme();
 
     const error = useSelector(selectError);
     const availableRooms = useSelector(selectAvailableRooms);
     const currentRoom = useSelector(selectCurrentRoom);
-    const theme = useTheme();
+    const user = useSelector(selectUser);
 
     function onSelectRoom(token) {
-        history.push(ROUTES_CONSTANTS.CHAT + ROUTES_CONSTANTS.URL_PARAM(token));
+        history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
     }
 
     function showCreationRoomCard() {
         dispatch(setShowNewRoomSection(true));
+    }
+
+    function getRoomTitle(sender, recipient) {
+        if (sender.token === user.token) {
+            return recipient.name;
+        }
+
+        return sender.name;
     }
 
     return (
@@ -47,9 +57,9 @@ function HallPage() {
             <ChatSider style={{ background: '#fff' }} width={300}>
                 <List
                     style={{ padding: '16px 24px' }}
-                    header={<Title level={3}>Contatos</Title>}
+                    header={<Title level={5}>Bem Vindo, {user.name}</Title>}
                     dataSource={availableRooms}
-                    renderItem={({ token, name }) => (
+                    renderItem={({ token, sender, recipient }) => (
                         <ItemWrapper key={token} onClick={() => onSelectRoom(token)}>
                             <List.Item style={{
                                 background: currentRoom && currentRoom.token === token
@@ -65,7 +75,7 @@ function HallPage() {
                                             }}
                                         />
                                     }
-                                    title={ name }
+                                    title={ getRoomTitle(sender, recipient) }
                                 />
                             </List.Item>
                         </ItemWrapper>

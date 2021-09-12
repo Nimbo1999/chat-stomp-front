@@ -2,13 +2,13 @@ import React from 'react';
 import { Input, Button, Alert } from 'antd';
 
 import { CommentaryWrapper, Container } from './styled.commentary';
-import { useHallContext } from '../../context/HallContext';
+import { useRoomContext } from '../../context/RoomContext';
 
 const { TextArea } = Input;
 
 function CommentaryInput() {
 
-    const { onSubmitMessage, handleOnChangeMessage, textMessage, error} = useHallContext();
+    const { onSubmitMessage, handleOnChangeMessage, textMessage, error } = useRoomContext();
 
     return (
         <Container>
