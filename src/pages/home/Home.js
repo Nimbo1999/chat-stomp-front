@@ -30,7 +30,7 @@ function HomePage({ history }) {
         const newContacts = contacts.filter(item => item.name !== userName);
         dispatch(setContacts(newContacts))
 
-        history.push(ROUTES_CONSTANTS.CHAT);
+        history.push(ROUTES_CONSTANTS.ROOM);
     }
 
     return (

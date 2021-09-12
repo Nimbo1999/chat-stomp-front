@@ -18,13 +18,14 @@ import EmptyPage from '../empty/Empty';
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
 
 import { withStompClient } from '../../context/StompClient';
+import { withHallContext } from '../../context/HallContext';
 
-import { ChatWrapper, ChatSider, ItemWrapper } from './styled.chat';
+import { ChatWrapper, ChatSider, ItemWrapper } from './styled.hall';
 import { useTheme } from 'styled-components';
 
 const {Title} = Typography;
 
-function ChatPage() {
+function HallPage() {
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -109,13 +110,13 @@ function ChatPage() {
             </ChatSider>
 
             <Switch>
-                <AppRoute path={ROUTES_CONSTANTS.CHAT + ROUTES_CONSTANTS.ROOM} component={RoomPage} />
+                <AppRoute path={ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.TOKEN_PARAM} component={RoomPage} />
 
-                <AppRoute path={ROUTES_CONSTANTS.CHAT} exact component={EmptyPage} />
+                <AppRoute path={ROUTES_CONSTANTS.ROOM} exact component={EmptyPage} />
             </Switch>
 
         </ChatWrapper>
     );
 }
 
-export default withStompClient(ChatPage);
+export default withStompClient(withHallContext(HallPage));

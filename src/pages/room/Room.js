@@ -9,7 +9,7 @@ import getRoomAction from '../../redux/channel/getRoom.action';
 
 import ROUTES_CONSTANTS from '../routes.constants';
 
-import ChatHistory from '../../components/chat-history/ChatHistory';
+import Chat from '../../components/chat/Chat';
 import CommentaryInput from '../../components/commentary/CommentaryInput';
 
 import { RoomContent, LoadingRoomWrapper } from './styled.room';
@@ -28,7 +28,7 @@ function RoomPage({ history, match }) {
 
     function onGoBack() {
         dispatch(setCurrentRoom(null));
-        history.replace(ROUTES_CONSTANTS.CHAT);
+        history.replace(ROUTES_CONSTANTS.ROOM);
     }
 
     function closeRoom() {
@@ -37,7 +37,7 @@ function RoomPage({ history, match }) {
 
             dispatch(closeRoomAction(() => {
                 message.success('Bate-papo encerrado com sucesso!');
-                history.replace(ROUTES_CONSTANTS.CHAT);
+                history.push(ROUTES_CONSTANTS.ROOM);
             }));
         });
     }
@@ -62,7 +62,7 @@ function RoomPage({ history, match }) {
             />
 
             <RoomContent>
-                <ChatHistory />
+                <Chat />
 
                 <CommentaryInput />
             </RoomContent>

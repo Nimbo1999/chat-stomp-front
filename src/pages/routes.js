@@ -5,15 +5,15 @@ import { useSelector } from 'react-redux';
 import { selectUserName } from '../redux/user/userSlice.reducer';
 
 import HomePage from './home/Home';
-import ChatPage from './chat/Chat';
+import HallPage from './hall/HallPage';
 
 import ROUTES_CONSTANTS from './routes.constants';
 
 const routes = [
     {
-        key: ROUTES_CONSTANTS.CHAT,
-        path: ROUTES_CONSTANTS.CHAT,
-        component: ChatPage
+        key: ROUTES_CONSTANTS.ROOM,
+        path: ROUTES_CONSTANTS.ROOM,
+        component: HallPage
     },
     {
         key: ROUTES_CONSTANTS.HOME,

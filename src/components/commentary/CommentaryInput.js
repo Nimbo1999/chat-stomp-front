@@ -2,13 +2,13 @@ import React from 'react';
 import { Input, Button, Alert } from 'antd';
 
 import { CommentaryWrapper, Container } from './styled.commentary';
-import { useStompProvider } from '../../context/StompClient';
+import { useHallContext } from '../../context/HallContext';
 
 const { TextArea } = Input;
 
 function CommentaryInput() {
 
-    const { onSubmitMessage, handleOnChangeMessage, textMessage, error} = useStompProvider();
+    const { onSubmitMessage, handleOnChangeMessage, textMessage, error} = useHallContext();
 
     return (
         <Container>

@@ -27,6 +27,16 @@ export const selectCurrentRoom = createSelector(
   (channel) => channel.currentRoom
 );
 
+export const selectCurrentRoomToken = createSelector(
+  [selectCurrentRoom],
+  (currentRoom) => currentRoom ? currentRoom.token : null
+);
+
+export const selectCurrentRoomMessages = createSelector(
+  [selectCurrentRoom],
+  (currentRoom) => currentRoom ? currentRoom.messages : null
+);
+
 export const isLoading = createSelector(
   [selectChannel],
   (channel) => channel.loading

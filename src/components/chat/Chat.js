@@ -1,15 +1,15 @@
 import React from 'react';
 
 import Message from '../message/Message';
-import { ChatHistoryWrapper } from './styled.chatHistory';
+import { ChatWrapper } from './styled.chat';
 
 import MESSAGES from '../../mock/messages.mock';
 
-function ChatHistory() {
+function Chat() {
     const mensagens = MESSAGES;
 
     return (
-        <ChatHistoryWrapper
+        <ChatWrapper
             dataSource={mensagens}
             renderItem={item => (
                 <Message
@@ -24,4 +24,4 @@ function ChatHistory() {
     );
 }
 
-export default ChatHistory;
+export default Chat;

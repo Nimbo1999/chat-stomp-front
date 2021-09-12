@@ -1,7 +1,7 @@
 const ROUTES_CONSTANTS = {
     HOME: '/',
-    CHAT: '/chat',
-    ROOM: '/:token',
+    ROOM: '/room',
+    TOKEN_PARAM: '/:token',
     URL_PARAM: param => `/${param}`,
 }
 
