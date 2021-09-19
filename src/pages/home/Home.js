@@ -1,42 +1,29 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { Card, Select, Typography, Button, Space, Row, Col } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { selectUserName, setName } from '../../redux/user/userSlice.reducer';
-import { setContacts } from '../../redux/channel/channel.reducer';
-import { selectContacts } from '../../redux/channel/channel.selector';
 
 import ROUTES_CONSTANTS from '../routes.constants';
+
+import { withHomePageContext, useHomePageContext } from '../../context/HomeContext';
 
 import { HomePageWrapper } from './styled.home';
 
 const { Option } = Select;
 const { Title } = Typography;
 
-function HomePage({ history }) {
-    const dispatch = useDispatch();
+function HomePage() {
+    const {
+        onSelectUser, selectedUserToken, contacts, handleSubmit, userToken
+    } = useHomePageContext();
 
-    const userName = useSelector(selectUserName);
-    const contacts = useSelector(selectContacts);
-
-    function onChange(value) {
-        const contact = contacts.find(item => item.token === value);
-        dispatch(setName(contact));
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        const newContacts = contacts.filter(item => item.name !== userName);
-        dispatch(setContacts(newContacts))
-
-        history.push(ROUTES_CONSTANTS.ROOM);
+    if (userToken) {
+        return <Redirect to={ ROUTES_CONSTANTS.ROOM } />
     }
 
     return (
         <HomePageWrapper>
             <Card style={{ width: '400px' }}>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={ handleSubmit }>
                     <Space direction="vertical" style={{ width: '100%' }} size={24}>
                         <Title level={3}>Selecione um usuário</Title>
 
@@ -44,14 +31,14 @@ function HomePage({ history }) {
                             showSearch
                             placeholder="Buscar..."
                             optionFilterProp="children"
-                            onChange={onChange}
+                            onChange={ onSelectUser }
                             filterOption={(input, option) =>
                                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                             }
                             style={{
                                 width: '100%',
                             }}
-                            value={userName}
+                            value={ selectedUserToken }
                         >
                             {contacts.map(contact => (
                                 <Option key={contact.token} value={contact.token}>{contact.name}</Option>
@@ -62,7 +49,7 @@ function HomePage({ history }) {
                             <Col>
                                 <Button
                                     type="primary"
-                                    disabled={!userName}
+                                    disabled={ !selectedUserToken }
                                     htmlType="submit"
                                 >
                                     Confirmar
@@ -76,4 +63,4 @@ function HomePage({ history }) {
     )
 }
 
-export default HomePage;
+export default withHomePageContext(HomePage);

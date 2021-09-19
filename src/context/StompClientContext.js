@@ -75,7 +75,7 @@ const StompClientContextProvider = ({ children }) => {
         setStompClient(client);
     }
 
-    const onConnectionSucceeded = () => setConnected(true);
+    const onConnectionSucceeded = () => setConnected(stompClient.connected);
 
     useEffect(() => {
 
@@ -87,6 +87,14 @@ const StompClientContextProvider = ({ children }) => {
                 onConnectionSucceeded,
                 err => console.error(err)
             );
+        }
+
+        return () => {
+            if (stompClient && stompClient.connected) {
+
+                console.log('Opa!!!!!!!!!!!!!')
+
+            }
         }
 
     }, [stompClient]);
