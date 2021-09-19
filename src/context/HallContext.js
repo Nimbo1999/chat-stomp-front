@@ -6,6 +6,7 @@ import getUserAvailablesRooms from '../redux/channel/getUserAvailablesRooms.acti
 import getRoomAction from '../redux/channel/getRoom.action';
 import { newMessageOnRoom, pushToAvailableRooms } from '../redux/channel/channel.reducer';
 import { selectCurrentRoomToken, selectAvailableRooms } from '../redux/channel/channel.selector';
+import { selectUserToken } from '../redux/user/userSlice.reducer';
 
 import { useStompClientContext } from './StompClientContext';
 
@@ -18,6 +19,7 @@ const HallContextProvider = ({ children }) => {
 
     const currentRoomToken = useSelector(selectCurrentRoomToken);
     const availableRooms = useSelector(selectAvailableRooms);
+    const userToken = useSelector(selectUserToken);
 
     const [subscription, setSubscription] = useState(null);
 
@@ -50,13 +52,21 @@ const HallContextProvider = ({ children }) => {
     }
 
     const incomingMessageHandler = (payload, ack, nack) => {
-        if (!payload.token || currentRoomToken === payload.token) return;
-
         const transaction = begin();
 
-        showMessageToasty(payload.senderName);
+        if (!payload.token || currentRoomToken === payload.token) {
+            ack({ transaction: transaction.id });
+            transaction.commit();
+            return;
+        }
+
+        const { sender, recipient } = payload;
+
+        showMessageToasty(sender, recipient);
 
         if (hasOpenedRoomWithPayloadToken(payload)) {
+            ack({ transaction: transaction.id });
+            transaction.commit();
             return dispatch(newMessageOnRoom(payload.token));
         }
 
@@ -77,7 +87,13 @@ const HallContextProvider = ({ children }) => {
         }
     }
 
-    const showMessageToasty = senderName => message.info(`Nova mensagem de ${senderName}`);
+    const showMessageToasty = (sender, recipient) => {
+        if (sender.token === userToken) {
+            return message.info(`Nova mensagem de ${recipient.name}`);
+        }
+
+        return message.info(`Nova mensagem de ${sender.name}`);
+    }
 
     const getRoomContent = payload => dispatch(
         getRoomAction(payload)
