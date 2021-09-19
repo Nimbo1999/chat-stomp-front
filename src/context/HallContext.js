@@ -3,8 +3,9 @@ import { message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getUserAvailablesRooms from '../redux/channel/getUserAvailablesRooms.action';
-import { newMessageOnRoom } from '../redux/channel/channel.reducer';
-import { selectCurrentRoomToken } from '../redux/channel/channel.selector';
+import getRoomAction from '../redux/channel/getRoom.action';
+import { newMessageOnRoom, pushToAvailableRooms } from '../redux/channel/channel.reducer';
+import { selectCurrentRoomToken, selectAvailableRooms } from '../redux/channel/channel.selector';
 
 import { useStompClientContext } from './StompClientContext';
 
@@ -16,6 +17,7 @@ const HallContextProvider = ({ children }) => {
     const { addHallSubscriber, connected } = useStompClientContext();
 
     const currentRoomToken = useSelector(selectCurrentRoomToken);
+    const availableRooms = useSelector(selectAvailableRooms);
 
     const [subscription, setSubscription] = useState(null);
 
@@ -46,13 +48,36 @@ const HallContextProvider = ({ children }) => {
         return incomingMessageHandler(payload);
     }
 
-    const incomingMessageHandler = async payload => {
+    const incomingMessageHandler = payload => {
+        console.log({ payload });
+
         if (currentRoomToken === payload.token) return;
 
         showMessageToasty(payload.senderName);
 
-        return dispatch(newMessageOnRoom(payload.token));
+        if (hasOpenedRoomWithPayloadToken(payload)) {
+            return dispatch(newMessageOnRoom(payload.token));
+        }
+
+        getRoomContent({
+            roomToken: payload.token,
+            onSuccess: onGetRoomContentSuccess
+        });
     }
+
+    const getRoomContent = payload => dispatch(
+        getRoomAction(payload)
+    );
+
+    const onGetRoomContentSuccess = room => dispatch(
+        pushToAvailableRooms({
+            ...room,
+            badge: 1
+        })
+    );
+
+    const hasOpenedRoomWithPayloadToken = payload => availableRooms
+        .some(({ token }) => token === payload.token);
 
     const showMessageToasty = senderName => message.info(`Nova mensagem de ${senderName}`);
 

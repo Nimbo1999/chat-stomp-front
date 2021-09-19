@@ -16,40 +16,32 @@ const getRoom = createAsyncThunk('channel/getRoom', async ({ roomToken, onSucces
 
         const room = await http.get(url);
 
-        if (onSuccess && typeof onSuccess === 'function') onSuccess(room);
+        const payload = roomAdapter.getRoom(room);
 
-        return roomAdapter.getRoom(room);
+        if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
+
+        return payload;
     } catch(err) {
         return rejectWithValue(err.message);
     }
 });
 
-export function getRoomPending(state) {
-    return {
-        ...state,
-        loading: true,
-        error: null,
-        currentRoom: null
-    }
-}
+export const getRoomPending = state => ({
+    ...state,
+    loading: true,
+    error: null,
+    currentRoom: null
+});
 
-export function getRoomFulfilled(state, action) {
-    return {
-        ...state,
-        loading: false,
-        currentRoom: {
-            ...state.currentRoom,
-            ...action.payload,
-        },
-    }
-}
+export const getRoomFulfilled = state => ({
+    ...state,
+    loading: false,
+});
 
-export function getRoomRejected(state, action) {
-    return {
-        ...state,
-        loading: false,
-        error: action.payload
-    }
-}
+export const getRoomRejected = (state, action) => ({
+    ...state,
+    loading: false,
+    error: action.payload
+});
 
 export default getRoom;

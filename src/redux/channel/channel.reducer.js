@@ -42,6 +42,13 @@ const channelSlice = createSlice({
       ...state,
       currentRoom: action.payload,
     }),
+    pushToAvailableRooms: (state, action) => ({
+        ...state,
+        availableRooms: [
+            ...state.availableRooms,
+            action.payload
+        ]
+    }),
     respondToCloseRoom: (state) => {
       const newAvailableRooms = [
         ...state.availableRooms.filter(room => room !== state.currentRoom.token)
@@ -132,7 +139,7 @@ const channelSlice = createSlice({
 
 export const {
   setContacts, setShowNewRoomSection, setSelectedRoomUser, closeError, setCurrentRoom,
-  respondToCloseRoom, insertMessage, newMessageOnRoom, removeBadges
+  respondToCloseRoom, insertMessage, newMessageOnRoom, removeBadges, pushToAvailableRooms
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

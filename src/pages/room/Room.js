@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch, batch } from 'react-redux';
 import { Layout, PageHeader, Button, Spin, message } from 'antd';
 
-import { respondToCloseRoom, setCurrentRoom } from '../../redux/channel/channel.reducer';
+import { respondToCloseRoom, setCurrentRoom, pushToAvailableRooms } from '../../redux/channel/channel.reducer';
 import { selectCurrentRoom, isLoading } from '../../redux/channel/channel.selector';
 import { selectUserToken } from '../../redux/user/userSlice.reducer';
 import closeRoomAction from '../../redux/channel/closeRoom.action';
@@ -28,8 +28,12 @@ const RoomPage = () => {
     const loading = useSelector(isLoading);
 
     useEffect(() => {
-        dispatch(getRoomAction({ roomToken: token }));
+        dispatch(getRoomAction({ roomToken: token, onSuccess: onGetRoomSuccess }));
     }, [token, dispatch]);
+
+    const onGetRoomSuccess = room => dispatch(
+        setCurrentRoom(room)
+    );
 
     const onGoBack = () => {
         dispatch(setCurrentRoom(null));
