@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card } from 'antd';
+import { Row, Col, Card, List } from 'antd';
 import dayjs from 'dayjs';
 
 import { Text, JustifyContent, CardMessage } from './styled.message';
@@ -28,20 +28,22 @@ function Message({ justify = 'start', text, date }) {
     }
 
     return (
-        <Row justify={ justify } style={ { width: '100%', marginBottom: theme.spacing(4) } }>
-            <Col span={20}>
-                <JustifyContent justify={ justify }>
-                    <CardMessage isRecipient={ justify === 'start' }>
-                        <Text justify={ justify }>{ formatText() }</Text>
+        <List.Item>
+            <Row justify={ justify } style={ { width: '100%', marginBottom: theme.spacing(4) } }>
+                <Col span={20}>
+                    <JustifyContent justify={ justify }>
+                        <CardMessage isRecipient={ justify === 'start' }>
+                            <Text justify={ justify }>{ formatText() }</Text>
 
-                        <Meta
-                            description={ formatDate() }
-                            style={ { textAlign: justify } }
-                        />
-                    </CardMessage>
-                </JustifyContent>
-            </Col>
-        </Row>
+                            <Meta
+                                description={ formatDate() }
+                                style={ { textAlign: justify } }
+                            />
+                        </CardMessage>
+                    </JustifyContent>
+                </Col>
+            </Row>
+        </List.Item>
     );
 }
 
