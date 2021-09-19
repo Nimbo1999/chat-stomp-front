@@ -42,19 +42,17 @@ const HallContextProvider = ({ children }) => {
     }, [currentRoomToken, availableRooms]);
 
     const onReceiveMessage = stompMessage => {
-        const { body, ack } = stompMessage;
+        const { body, ack, nack } = stompMessage;
 
         const payload = JSON.parse(body);
 
-        return incomingMessageHandler(payload, ack);
+        return incomingMessageHandler(payload, ack, nack);
     }
 
-    const incomingMessageHandler = (payload, ack) => {
+    const incomingMessageHandler = (payload, ack, nack) => {
         if (!payload.token || currentRoomToken === payload.token) return;
 
         const transaction = begin();
-
-        ack({ transaction: transaction.id });
 
         showMessageToasty(payload.senderName);
 
@@ -62,12 +60,21 @@ const HallContextProvider = ({ children }) => {
             return dispatch(newMessageOnRoom(payload.token));
         }
 
-        getRoomContent({
-            roomToken: payload.token,
-            onSuccess: onGetRoomContentSuccess
-        });
+        try {
+            getRoomContent({
+                roomToken: payload.token,
+                onSuccess: room => {
+                    ack({ transaction: transaction.id });
+                    transaction.commit();
 
-        transaction.commit();
+                    onGetRoomContentSuccess(room);
+                }
+            });
+        } catch(err) {
+            nack({ transaction: transaction.id });
+
+            transaction.commit();
+        }
     }
 
     const showMessageToasty = senderName => message.info(`Nova mensagem de ${senderName}`);

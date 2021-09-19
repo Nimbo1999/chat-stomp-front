@@ -2,13 +2,11 @@ const roomAdapter = {
     createRoom: (currentUser, targetUser) => ({
         sender: {
             token: currentUser.token,
-            name: currentUser.name,
-            color: currentUser.status,
+            name: currentUser.name
         },
         recipient: {
             token: targetUser.token,
-            name: targetUser.name,
-            color: targetUser.status,
+            name: targetUser.name
         }
     }),
 
@@ -16,7 +14,7 @@ const roomAdapter = {
         token: room.token,
         startedOn: room.startedOn,
         closedOn: room.closedOn,
-        messages: messages && messages.lenght
+        messages: messages && messages.length
         ? messages.map(message => ({
             token: message.token,
             userToken: message.userToken,

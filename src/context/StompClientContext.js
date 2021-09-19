@@ -26,7 +26,7 @@ const StompClientContextProvider = ({ children }) => {
         onReceiveMessage,
         {
             id: getHallSubscriptionId(userToken),
-            ack: ACK_VALUES.AUTO
+            ack: ACK_VALUES.CLIENT_INDIVIDUAL
         }
     );
 
@@ -50,15 +50,17 @@ const StompClientContextProvider = ({ children }) => {
     );
 
     const send = (payload, transaction) => {
+        const destination = API_CONSTANTS.WEB_SOCKET.APP + API_CONSTANTS.WEB_SOCKET.CHAT;
+
         if (transaction && transaction.id) {
             const sendHeader = {
                 transaction: transaction.id
             };
 
-            return stompClient.send('/app/chat', sendHeader, JSON.stringify(payload));
+            return stompClient.send(destination, sendHeader, JSON.stringify(payload));
         }
 
-        return stompClient.send('/app/chat', {}, JSON.stringify(payload));
+        return stompClient.send(destination, {}, JSON.stringify(payload));
     }
 
     const begin = () => stompClient.begin();

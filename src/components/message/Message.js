@@ -21,12 +21,18 @@ function Message({ justify = 'start', text, date }) {
         return dayjs(date).format('DD/MM/YYYY [às] HH-mm');
     }
 
+    const formatText = () => {
+        const message = String(text).replace(/\/n/g, '<br />')
+
+        return message;
+    }
+
     return (
         <Row justify={ justify } style={ { width: '100%', marginBottom: theme.spacing(4) } }>
             <Col span={20}>
                 <JustifyContent justify={ justify }>
                     <CardMessage isRecipient={ justify === 'start' }>
-                        <Text justify={ justify }>{ text }</Text>
+                        <Text justify={ justify }>{ formatText() }</Text>
 
                         <Meta
                             description={ formatDate() }

@@ -31,6 +31,10 @@ export const API_CONSTANTS = {
 
         ROOMS: '/rooms',
 
+        APP: '/app',
+
+        CHAT: '/chat',
+
     },
 
     URL_PARAM: param => `/${param}`,
