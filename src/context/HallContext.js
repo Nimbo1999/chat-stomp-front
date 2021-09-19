@@ -14,7 +14,7 @@ const HallContext = createContext({});
 const HallContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
-    const { addHallSubscriber, connected } = useStompClientContext();
+    const { addHallSubscriber, connected, begin } = useStompClientContext();
 
     const currentRoomToken = useSelector(selectCurrentRoomToken);
     const availableRooms = useSelector(selectAvailableRooms);
@@ -39,19 +39,22 @@ const HallContextProvider = ({ children }) => {
             setSubscription(null);
         }
 
-    }, [currentRoomToken]);
+    }, [currentRoomToken, availableRooms]);
 
     const onReceiveMessage = stompMessage => {
-        const { body } = stompMessage;
+        const { body, ack } = stompMessage;
+
         const payload = JSON.parse(body);
 
-        return incomingMessageHandler(payload);
+        return incomingMessageHandler(payload, ack);
     }
 
-    const incomingMessageHandler = payload => {
-        console.log({ payload });
+    const incomingMessageHandler = (payload, ack) => {
+        if (!payload.token || currentRoomToken === payload.token) return;
 
-        if (currentRoomToken === payload.token) return;
+        const transaction = begin();
+
+        ack({ transaction: transaction.id });
 
         showMessageToasty(payload.senderName);
 
@@ -63,7 +66,11 @@ const HallContextProvider = ({ children }) => {
             roomToken: payload.token,
             onSuccess: onGetRoomContentSuccess
         });
+
+        transaction.commit();
     }
+
+    const showMessageToasty = senderName => message.info(`Nova mensagem de ${senderName}`);
 
     const getRoomContent = payload => dispatch(
         getRoomAction(payload)
@@ -78,8 +85,6 @@ const HallContextProvider = ({ children }) => {
 
     const hasOpenedRoomWithPayloadToken = payload => availableRooms
         .some(({ token }) => token === payload.token);
-
-    const showMessageToasty = senderName => message.info(`Nova mensagem de ${senderName}`);
 
     const getAvailableRooms = () => dispatch(getUserAvailablesRooms());
 

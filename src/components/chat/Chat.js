@@ -24,10 +24,10 @@ function Chat() {
             dataSource={ getMessages() }
             renderItem={item => (
                 <Message
-                    key={item.token}
-                    justify={item.userToken === userToken ? 'end' : 'start'}
-                    text={item.text}
-                    date={item.date}
+                    key={ item.token }
+                    justify={ item.userToken === userToken ? 'end' : 'start' }
+                    text={ item.text }
+                    date={ item.date }
                 />
             )}
             itemLayout="vertical"

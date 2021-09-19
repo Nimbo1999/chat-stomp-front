@@ -18,42 +18,50 @@ const StompClientContextProvider = ({ children }) => {
     const [connected, setConnected] = useState(false);
     const [stompClient, setStompClient] = useState(null);
 
-    const addHallSubscriber = onReceiveMessage => {
-        return subscribe(
-            API_CONSTANTS.WEB_SOCKET.USER +
-            API_CONSTANTS.URL_PARAM(userToken) +
-            API_CONSTANTS.WEB_SOCKET.QUEUE +
-            API_CONSTANTS.WEB_SOCKET.ROOMS,
-            onReceiveMessage,
-            {
-                id: getHallSubscriptionId(userToken),
-                ack: ACK_VALUES.AUTO
-            }
-        );
+    const addHallSubscriber = onReceiveMessage => subscribe(
+        API_CONSTANTS.WEB_SOCKET.USER +
+        API_CONSTANTS.URL_PARAM(userToken) +
+        API_CONSTANTS.WEB_SOCKET.QUEUE +
+        API_CONSTANTS.WEB_SOCKET.ROOMS,
+        onReceiveMessage,
+        {
+            id: getHallSubscriptionId(userToken),
+            ack: ACK_VALUES.AUTO
+        }
+    );
+
+    const addRoomSubscriber = (recipientToken, roomToken, onReceiveMessage) => subscribe(
+        API_CONSTANTS.WEB_SOCKET.USER +
+        API_CONSTANTS.URL_PARAM(recipientToken) +
+        API_CONSTANTS.WEB_SOCKET.QUEUE +
+        API_CONSTANTS.WEB_SOCKET.ROOMS +
+        API_CONSTANTS.URL_PARAM(roomToken),
+        onReceiveMessage,
+        {
+            id: getRoomSubscriptionId(userToken, roomToken),
+            ack: ACK_VALUES.CLIENT
+        }
+    );
+
+    const subscribe = (destination, callback, header = {}) => stompClient.subscribe(
+        destination,
+        callback,
+        header
+    );
+
+    const send = (payload, transaction) => {
+        if (transaction && transaction.id) {
+            const sendHeader = {
+                transaction: transaction.id
+            };
+
+            return stompClient.send('/app/chat', sendHeader, JSON.stringify(payload));
+        }
+
+        return stompClient.send('/app/chat', {}, JSON.stringify(payload));
     }
 
-    const addRoomSubscriber = (recipientToken, roomToken, onReceiveMessage) => {
-        return subscribe(
-            API_CONSTANTS.WEB_SOCKET.USER +
-            API_CONSTANTS.URL_PARAM(recipientToken) +
-            API_CONSTANTS.WEB_SOCKET.QUEUE +
-            API_CONSTANTS.WEB_SOCKET.ROOMS +
-            API_CONSTANTS.URL_PARAM(roomToken),
-            onReceiveMessage,
-            {
-                id: getRoomSubscriptionId(userToken, roomToken),
-                ack: ACK_VALUES.AUTO // TODO: Estar a possibilidade da implantação dos valores client, client-individual.
-            }
-        );
-    }
-
-    const subscribe = (destination, callback, header = {}) => {
-        return stompClient.subscribe(destination, callback, header);
-    }
-
-    const send = payload => {
-        stompClient.send('/app/chat', {}, JSON.stringify(payload));
-    }
+    const begin = () => stompClient.begin();
 
     const initializeStompClient = () => {
         const socketConnection = new SockJS(
@@ -86,7 +94,8 @@ const StompClientContextProvider = ({ children }) => {
             connected,
             addHallSubscriber,
             addRoomSubscriber,
-            send
+            send,
+            begin
         }}>
             {children}
         </StompClientContext.Provider>
@@ -99,6 +108,7 @@ const StompClientContextProvider = ({ children }) => {
  *  addHallSubscriber: (onReceiveMessage: void) => Stomp.Subscription,
  *  addRoomSubscriber: (roomToken: string, onReceiveMessage: void) => Stomp.Subscription,
  *  send: (payload: { roomToken: string, content: string, type: 'TEXT' | 'IMAGE' }) => void
+ *  begin: () => { abort: () => void, commit: () => void, id: string }
  * }}
  */
 const useStompClientContext = () => useContext(StompClientContext);

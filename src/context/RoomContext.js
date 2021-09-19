@@ -16,7 +16,7 @@ const messagesService = new MessagesService();
 const RoomContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
-    const { send, addRoomSubscriber  } = useStompClientContext();
+    const { send, addRoomSubscriber, begin } = useStompClientContext();
 
     const userToken = useSelector(selectUserToken);
     const currentRoomToken = useSelector(selectCurrentRoomToken);
@@ -26,57 +26,6 @@ const RoomContextProvider = ({ children }) => {
 
     const [textMessage, setTextMessage] = useState('');
     const [error, setError] = useState('');
-
-    const onReceiveMessage = stompMessage => {
-        const { body } = stompMessage;
-        const payload = JSON.parse(body);
-
-        return incomingMessageHandler(payload);
-    }
-
-    const incomingMessageHandler = async payload => {
-        const data = await messagesService.getMessage(payload.messageToken);
-
-        console.log({ data });
-
-        // Caso a sala atual estiver aberta.
-        return addIncomingMessageToCurrentChatRoom({
-            text: data.content,
-            date: data.timestamp,
-            token: payload.messageToken,
-            userToken: payload.messageOwner
-        });
-    }
-
-    const addIncomingMessageToCurrentChatRoom = payload => includeMessageInChat(payload);
-
-    const includeMessageInChat = payload => dispatch(
-        insertMessage(payload)
-    );
-
-    const onSubmitMessage = event => {
-        event.preventDefault();
-
-        if (!textMessage) setError('Esse campo é obrigatório!');
-
-        const message = {
-            roomToken: currentRoomToken,
-            content: textMessage,
-            type: 'TEXT',
-            userToken
-        };
-
-        send(message);
-        setTextMessage('');
-    }
-
-    const handleOnChangeMessage = ({ target }) => {
-        const { value } = target;
-
-        if (error) setError('');
-
-        setTextMessage(value.trimStart());
-    }
 
     useEffect(() => {
         if (!currentRoomToken || !currentRoomRecipientToken) return;
@@ -88,11 +37,80 @@ const RoomContextProvider = ({ children }) => {
         }
 
         return () => {
-            subscription.unsubscribe();
-            setSubscription(null);
+            if (subscription && subscription.unsubscribe) {
+                subscription.unsubscribe();
+
+                setSubscription(null);
+            }
+        }
+    }, [subscription, currentRoomToken]);
+
+    const onReceiveMessage = stompMessage => {
+        const { body, ack, nack } = stompMessage;
+        const payload = JSON.parse(body);
+
+        return incomingMessageHandler(payload, ack, nack);
+    }
+
+    const incomingMessageHandler = async (payload, onSuccess, onError) => {
+        const transaction = begin();
+
+        console.log({ transaction });
+
+        try {
+            const data = await messagesService.getMessage(payload.messageToken);
+            console.log({ data });
+
+            addIncomingMessageToCurrentChatRoom({
+                text: data.content,
+                date: data.timestamp,
+                token: payload.messageToken,
+                userToken: payload.messageOwner
+            });
+
+            onSuccess({ transaction: transaction.id });
+
+            transaction.commit();
+        } catch (err) {
+            onError({ transaction: transaction.id });
+
+            transaction.commit();
         }
 
-    }, [subscription, currentRoomToken]);
+    }
+
+    const addIncomingMessageToCurrentChatRoom = payload => includeMessageInChat(payload);
+
+    const includeMessageInChat = payload => dispatch(
+        insertMessage(payload)
+    );
+
+    const onSubmitMessage = event => {
+        event.preventDefault();
+        const transaction = begin();
+
+        if (!textMessage) setError('Esse campo é obrigatório!');
+
+        const message = {
+            roomToken: currentRoomToken,
+            content: textMessage,
+            type: 'TEXT',
+            userToken
+        };
+
+        send(message, transaction);
+        setTextMessage('');
+
+        transaction.commit();
+    }
+
+    const handleOnChangeMessage = ({ target }) => {
+        const { value } = target;
+
+        if (error) setError('');
+
+        setTextMessage(value.trimStart());
+    }
 
     return (
         <RoomContext.Provider
@@ -100,7 +118,8 @@ const RoomContextProvider = ({ children }) => {
                 onSubmitMessage,
                 handleOnChangeMessage,
                 textMessage,
-                error
+                error,
+                subscription
             }}
         >
             {children}

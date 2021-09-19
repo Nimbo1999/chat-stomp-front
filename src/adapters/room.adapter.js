@@ -16,7 +16,14 @@ const roomAdapter = {
         token: room.token,
         startedOn: room.startedOn,
         closedOn: room.closedOn,
-        messages,
+        messages: messages && messages.lenght
+        ? messages.map(message => ({
+            token: message.token,
+            userToken: message.userToken,
+            text: message.content,
+            date: message.timestamp,
+        }))
+        : [],
         recipient: {
             token: room.recipient.token,
             name: room.recipient.name,
