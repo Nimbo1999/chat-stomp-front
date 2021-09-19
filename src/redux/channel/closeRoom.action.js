@@ -18,35 +18,36 @@ const closeRoom = createAsyncThunk('channel/closeRoom', async (onSuccess, {getSt
 
         await http.post({}, url);
 
-        if (onSuccess) onSuccess();
-        return;
+        if (onSuccess) onSuccess(token);
+
+        return token;
     } catch(err) {
         return rejectWithValue(err.message);
     }
 });
 
-export function closeRoomPending(state) {
-    return {
-        ...state,
-        loading: true,
-        error: null,
-    }
-}
+export const closeRoomPending = state => ({
+    ...state,
+    loading: true,
+    error: null,
+});
 
-export function closeRoomFulfilled(state, action) {
+export const closeRoomFulfilled = (state, action) => {
+    const newAvailableRooms = state.availableRooms
+        .filter(({ token }) => token !== action.payload);
+
     return {
         ...state,
         loading: false,
         currentRoom: null,
+        availableRooms: newAvailableRooms
     }
-}
+};
 
-export function closeRoomRejected(state, action) {
-    return {
-        ...state,
-        loading: false,
-        error: action.payload
-    }
-}
+export const closeRoomRejected = (state, action) => ({
+    ...state,
+    loading: false,
+    error: action.payload
+})
 
 export default closeRoom;

@@ -1,18 +1,16 @@
 const roomAdapter = {
-    createRoom: (currentUser, targetUser) => {
-        return {
-            sender: {
-                token: currentUser.token,
-                name: currentUser.name,
-                color: currentUser.status,
-            },
-            recipient: {
-                token: targetUser.token,
-                name: targetUser.name,
-                color: targetUser.status,
-            },
-        };
-    },
+    createRoom: (currentUser, targetUser) => ({
+        sender: {
+            token: currentUser.token,
+            name: currentUser.name,
+            color: currentUser.status,
+        },
+        recipient: {
+            token: targetUser.token,
+            name: targetUser.name,
+            color: targetUser.status,
+        }
+    }),
 
     getRoom: ({ room, messages }) => ({
         token: room.token,

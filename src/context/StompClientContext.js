@@ -51,16 +51,6 @@ const StompClientContextProvider = ({ children }) => {
         return stompClient.subscribe(destination, callback, header);
     }
 
-    /**
-     * @todo Adicionar a função para remover a inscrição.
-     */
-    const clearSubscriber = onReceiveMessage => {
-        /**
-         * @type {Stomp.Client}
-         */
-        const client = stompClient;
-    }
-
     const send = payload => {
         stompClient.send('/app/chat', {}, JSON.stringify(payload));
     }
@@ -75,11 +65,7 @@ const StompClientContextProvider = ({ children }) => {
         setStompClient(client);
     }
 
-    const onConnectionSucceeded = payload => {
-        setConnected(true);
-        console.log('Connected to STOMP!!!')
-        console.log({ payload });
-    }
+    const onConnectionSucceeded = () => setConnected(true);
 
     useEffect(() => {
 

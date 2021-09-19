@@ -47,6 +47,8 @@ function HallPage() {
     }
 
     function getRoomTitle(sender, recipient) {
+        if (!sender || !recipient) return '';
+
         if (sender.token === user.token) {
             return recipient.name;
         }

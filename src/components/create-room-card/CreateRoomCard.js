@@ -24,24 +24,25 @@ function CreateRoomCard() {
     const selectedCardUser = useSelector(selectedRoomUser);
     const isVisible = useSelector(selectIsShowingNewRoomSection);
 
-    function onSelectNewRecipient(token) {
+    const onSelectNewRecipient = token => {
         const selectedUser = contacts.find(item => item.token === token);
+
         dispatch(setSelectedRoomUser(selectedUser));
     }
 
-    function onCancel() {
-        batch(() => {
-            dispatch(setShowNewRoomSection(false));
-            dispatch(setSelectedRoomUser({ token: '' }));
-        });
-    }
+    const onCancel = () => batch(() => {
+        dispatch(setShowNewRoomSection(false));
 
-    function onCreateNewRoom() {
-        dispatch(createNewRoomAction((roomToken) => {
+        dispatch(setSelectedRoomUser({ token: '' }));
+    });
+
+    const onCreateNewRoom = () => dispatch(
+        createNewRoomAction(({ token }) => {
             message.success('Sala criada com sucesso!');
-            history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(roomToken)}`);
-        }));
-    }
+
+            history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(token)}`);
+        })
+    );
 
     if (isVisible) return (
         <Card
