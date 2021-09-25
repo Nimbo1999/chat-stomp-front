@@ -64,35 +64,33 @@ function HallPage() {
 
     return (
         <ChatWrapper style={{ height: '100%' }}>
-            <ChatSider style={{ background: '#fff' }} width={300}>
+            <ChatSider width={300}>
                 <List
                     style={{ padding: '16px 24px' }}
-                    header={<Title level={5}>Bem Vindo, {user.name}</Title>}
+                    header={
+                        <Title level={5} style={{ color: theme.pallet.white }}>
+                            Bem Vindo, {user.name}
+                        </Title>
+                    }
                     dataSource={availableRooms}
                     renderItem={({ token, sender, recipient, badge }) => (
-                        <ItemWrapper key={token} onClick={() => onSelectRoom(token)}>
-                            <List.Item
-                                style={{
-                                    background:
-                                        currentRoom && currentRoom.token === token
-                                            ? theme.pallet.lightBlue
-                                            : theme.pallet.white
-                                }}
-                            >
-                                <List.Item.Meta
-                                    avatar={
-                                        <Avatar
-                                            icon={<MessageTwoTone />}
-                                            style={{
-                                                backgroundColor: 'transparent'
-                                            }}
-                                        />
-                                    }
-                                    title={getRoomTitle(sender, recipient)}
+                        <ItemWrapper
+                            key={token}
+                            onClick={() => onSelectRoom(token)}
+                            active={currentRoom && currentRoom.token === token}
+                        >
+                            <div className="main-content">
+                                <Avatar
+                                    icon={<MessageTwoTone />}
+                                    style={{
+                                        backgroundColor: 'transparent'
+                                    }}
                                 />
 
-                                <Badge count={badge} />
-                            </List.Item>
+                                <span className="title">{getRoomTitle(sender, recipient)}</span>
+                            </div>
+
+                            <Badge count={badge} />
                         </ItemWrapper>
                     )}
                     footer={
