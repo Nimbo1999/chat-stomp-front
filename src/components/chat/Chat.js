@@ -30,6 +30,7 @@ function Chat() {
                     date={item.date}
                 />
             )}
+            rowKey={item => item.token}
             itemLayout="vertical"
         />
     );

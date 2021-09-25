@@ -4,7 +4,7 @@ import { List } from 'antd';
 const ChatWrapper = styled(List)`
     flex: 1;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     overflow: hidden scroll;
     margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
