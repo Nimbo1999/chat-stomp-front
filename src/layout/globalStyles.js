@@ -1,4 +1,4 @@
-import {createGlobalStyle} from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import AntdCSS from 'antd/dist/antd.min.css';
 
 const GlobalStyles = createGlobalStyle`
@@ -7,11 +7,11 @@ const GlobalStyles = createGlobalStyle`
     html {
         font-size: 14px;
 
-        @media screen and (min-width: ${({theme}) => theme.breakPoints.md}) {
+        @media screen and (min-width: ${({ theme }) => theme.breakPoints.md}) {
             font-size: 15px;
         }
 
-        @media screen and (min-width: ${({theme}) => theme.breakPoints.lg}) {
+        @media screen and (min-width: ${({ theme }) => theme.breakPoints.lg}) {
             font-size: 16px;
         }
     }
@@ -23,7 +23,7 @@ const GlobalStyles = createGlobalStyle`
     }
 
     body {
-        background: ${({theme}) => theme.pallet.background};
+        background: ${({ theme }) => theme.pallet.background};
     }
 `;
 

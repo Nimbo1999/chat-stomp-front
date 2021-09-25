@@ -2,7 +2,6 @@ export const API_CONSTANTS = {
     BASE_URL: 'http://localhost:8080',
 
     ROOM: {
-
         ROOMS: '/rooms',
 
         OPEN: '/open',
@@ -11,18 +10,14 @@ export const API_CONSTANTS = {
 
         CONTENT: '/content',
 
-        USERS: '/users',
-
+        USERS: '/users'
     },
 
     MESSAGES: {
-
-        ROOT: '/messages',
-
+        ROOT: '/messages'
     },
 
     WEB_SOCKET: {
-
         ROOT: '/ws',
 
         USER: '/user',
@@ -33,9 +28,8 @@ export const API_CONSTANTS = {
 
         APP: '/app',
 
-        CHAT: '/chat',
-
+        CHAT: '/chat'
     },
 
-    URL_PARAM: param => `/${param}`,
-}
+    URL_PARAM: param => `/${param}`
+};

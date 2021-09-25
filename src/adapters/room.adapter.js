@@ -14,21 +14,22 @@ const roomAdapter = {
         token: room.token,
         startedOn: room.startedOn,
         closedOn: room.closedOn,
-        messages: messages && messages.length
-        ? messages.map(message => ({
-            token: message.token,
-            userToken: message.userToken,
-            text: message.content,
-            date: message.timestamp,
-        }))
-        : [],
+        messages:
+            messages && messages.length
+                ? messages.map(message => ({
+                      token: message.token,
+                      userToken: message.userToken,
+                      text: message.content,
+                      date: message.timestamp
+                  }))
+                : [],
         recipient: {
             token: room.recipient.token,
-            name: room.recipient.name,
+            name: room.recipient.name
         },
         sender: {
             token: room.sender.token,
-            name: room.sender.name,
+            name: room.sender.name
         }
     }),
 
@@ -40,7 +41,6 @@ const roomAdapter = {
             badge: 0
         }));
     }
-
-}
+};
 
 export default roomAdapter;

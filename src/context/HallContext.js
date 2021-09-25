@@ -27,20 +27,15 @@ const HallContextProvider = ({ children }) => {
         if (!connected) return;
 
         if (!subscription) {
-            setSubscription(
-                addHallSubscriber(onReceiveMessage)
-            );
+            setSubscription(addHallSubscriber(onReceiveMessage));
         }
-
     }, [subscription, connected]);
 
     useEffect(() => {
-
         if (subscription && subscription.unsubscribe) {
             subscription.unsubscribe();
             setSubscription(null);
         }
-
     }, [currentRoomToken, availableRooms]);
 
     const onReceiveMessage = stompMessage => {
@@ -49,7 +44,7 @@ const HallContextProvider = ({ children }) => {
         const payload = JSON.parse(body);
 
         return incomingMessageHandler(payload, ack, nack);
-    }
+    };
 
     const incomingMessageHandler = (payload, ack, nack) => {
         const transaction = begin();
@@ -80,12 +75,12 @@ const HallContextProvider = ({ children }) => {
                     onGetRoomContentSuccess(room);
                 }
             });
-        } catch(err) {
+        } catch (err) {
             nack({ transaction: transaction.id });
 
             transaction.commit();
         }
-    }
+    };
 
     const showMessageToasty = (sender, recipient) => {
         if (sender.token === userToken) {
@@ -93,39 +88,35 @@ const HallContextProvider = ({ children }) => {
         }
 
         return message.info(`Nova mensagem de ${sender.name}`);
-    }
+    };
 
-    const getRoomContent = payload => dispatch(
-        getRoomAction(payload)
-    );
+    const getRoomContent = payload => dispatch(getRoomAction(payload));
 
-    const onGetRoomContentSuccess = room => dispatch(
-        pushToAvailableRooms({
-            ...room,
-            badge: 1
-        })
-    );
+    const onGetRoomContentSuccess = room =>
+        dispatch(
+            pushToAvailableRooms({
+                ...room,
+                badge: 1
+            })
+        );
 
-    const hasOpenedRoomWithPayloadToken = payload => availableRooms
-        .some(({ token }) => token === payload.token);
+    const hasOpenedRoomWithPayloadToken = payload =>
+        availableRooms.some(({ token }) => token === payload.token);
 
     const getAvailableRooms = () => dispatch(getUserAvailablesRooms());
 
     useEffect(() => getAvailableRooms(), []);
 
-    return (
-        <HallContext.Provider>
-            {children}
-        </HallContext.Provider>
-    );
-}
+    return <HallContext.Provider>{children}</HallContext.Provider>;
+};
 
 const useHallContext = () => useContext(HallContext);
 
-const withHallContext = Component => () => (
-	<HallContextProvider>
-		<Component />
-	</HallContextProvider>
-);
+const withHallContext = Component => () =>
+    (
+        <HallContextProvider>
+            <Component />
+        </HallContextProvider>
+    );
 
-export { useHallContext, withHallContext }
+export { useHallContext, withHallContext };

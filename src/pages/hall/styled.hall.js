@@ -8,7 +8,7 @@ const ChatWrapper = styled(Layout)`
 `;
 
 const ChatSider = styled(Sider)`
-    background: ${({theme}) => theme.pallet.white};
+    background: ${({ theme }) => theme.pallet.white};
 `;
 
 const ItemWrapper = styled.div`

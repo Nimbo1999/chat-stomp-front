@@ -6,30 +6,28 @@ class HttpService {
     }
 
     async post(data, endPoint) {
-        const response = await fetch(this.baseUrl + endPoint,
-            {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: this.postHeaders(),
-            }
-        ).then(this.checkResponse)
-        .catch(err => {
-            throw err;
-        });
+        const response = await fetch(this.baseUrl + endPoint, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: this.postHeaders()
+        })
+            .then(this.checkResponse)
+            .catch(err => {
+                throw err;
+            });
 
         return response;
     }
 
     async get(endPoint) {
-        const response = await fetch(this.baseUrl + endPoint,
-            {
-                method: 'GET',
-                headers: this.getHeaders(),
-            }
-        ).then(this.checkResponse)
-        .catch(err => {
-            throw err;
-        });
+        const response = await fetch(this.baseUrl + endPoint, {
+            method: 'GET',
+            headers: this.getHeaders()
+        })
+            .then(this.checkResponse)
+            .catch(err => {
+                throw err;
+            });
 
         return response;
     }
@@ -54,7 +52,6 @@ class HttpService {
 
         return headers;
     }
-
 }
 
 export default HttpService;

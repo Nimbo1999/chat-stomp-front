@@ -6,10 +6,10 @@ import rootReducer from './root.reducer';
 const MIDDLEWARES = getDefaultMiddleware();
 
 if (process.env.NODE_ENV === 'development') {
-  	MIDDLEWARES.push(logger);
+    MIDDLEWARES.push(logger);
 }
 
 export const store = configureStore({
-	reducer: rootReducer,
-	middleware: MIDDLEWARES,
+    reducer: rootReducer,
+    middleware: MIDDLEWARES
 });

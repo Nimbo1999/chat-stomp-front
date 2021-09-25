@@ -1,30 +1,33 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import {API_CONSTANTS} from '../../constants/api.constants';
+import { API_CONSTANTS } from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
 import HttpService from '../../services/HttpService';
 
-const getRoom = createAsyncThunk('channel/getRoom', async ({ roomToken, onSuccess }, {rejectWithValue}) => {
-    const http = new HttpService();
+const getRoom = createAsyncThunk(
+    'channel/getRoom',
+    async ({ roomToken, onSuccess }, { rejectWithValue }) => {
+        const http = new HttpService();
 
-    try {
-        const url =
-            API_CONSTANTS.ROOM.ROOMS +
-            API_CONSTANTS.URL_PARAM(roomToken) +
-            API_CONSTANTS.ROOM.CONTENT;
+        try {
+            const url =
+                API_CONSTANTS.ROOM.ROOMS +
+                API_CONSTANTS.URL_PARAM(roomToken) +
+                API_CONSTANTS.ROOM.CONTENT;
 
-        const room = await http.get(url);
+            const room = await http.get(url);
 
-        const payload = roomAdapter.getRoom(room);
+            const payload = roomAdapter.getRoom(room);
 
-        if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
+            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
 
-        return payload;
-    } catch(err) {
-        return rejectWithValue(err.message);
+            return payload;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
     }
-});
+);
 
 export const getRoomPending = state => ({
     ...state,
@@ -35,7 +38,7 @@ export const getRoomPending = state => ({
 
 export const getRoomFulfilled = state => ({
     ...state,
-    loading: false,
+    loading: false
 });
 
 export const getRoomRejected = (state, action) => ({

@@ -7,40 +7,43 @@ import HttpService from '../../services/HttpService';
 import { selectUser } from '../user/userSlice.reducer';
 import { selectedRoomUser } from './channel.selector';
 
-const createRoom = createAsyncThunk('channel/createRoom', async (onSuccess, {getState, rejectWithValue}) => {
-    const http = new HttpService();
+const createRoom = createAsyncThunk(
+    'channel/createRoom',
+    async (onSuccess, { getState, rejectWithValue }) => {
+        const http = new HttpService();
 
-    try {
-        const currentUser = selectUser(getState());
-        const targetUser = selectedRoomUser(getState());
+        try {
+            const currentUser = selectUser(getState());
+            const targetUser = selectedRoomUser(getState());
 
-        const bodyPayload = roomAdapter.createRoom(currentUser, targetUser);
+            const bodyPayload = roomAdapter.createRoom(currentUser, targetUser);
 
-        const roomToken = await http.post(
-            bodyPayload,
-            `${API_CONSTANTS.ROOM.ROOMS}${API_CONSTANTS.ROOM.OPEN}`
-        );
+            const roomToken = await http.post(
+                bodyPayload,
+                `${API_CONSTANTS.ROOM.ROOMS}${API_CONSTANTS.ROOM.OPEN}`
+            );
 
-        const responsePayload = { ...bodyPayload, token: roomToken, badge: 0 }
+            const responsePayload = { ...bodyPayload, token: roomToken, badge: 0 };
 
-        if (onSuccess) onSuccess(responsePayload);
+            if (onSuccess) onSuccess(responsePayload);
 
-        return responsePayload;
-    } catch(err) {
-        return rejectWithValue(err.message);
+            return responsePayload;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
     }
-});
+);
 
 export const createRoomPending = state => ({
     ...state,
     loading: true,
-    error: null,
+    error: null
 });
 
 export const createRoomFulfilled = (state, action) => ({
     ...state,
     loading: false,
-    availableRooms: [ ...state.availableRooms, action.payload ],
+    availableRooms: [...state.availableRooms, action.payload],
     isShowingNewRoomSection: false,
     selectedRoomUser: { token: '' },
     currentRoom: { token: action.payload }

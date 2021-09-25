@@ -10,7 +10,7 @@ const HomePageContext = createContext({});
 const HomePageContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
-    const [ selectedUserToken, setSelectedUserToken ] = useState('');
+    const [selectedUserToken, setSelectedUserToken] = useState('');
 
     const userToken = useSelector(selectUserToken);
     const contacts = useSelector(selectContacts);
@@ -19,7 +19,7 @@ const HomePageContextProvider = ({ children }) => {
         const contact = contacts.find(item => item.token === value);
 
         setSelectedUserToken(contact.token);
-    }
+    };
 
     const handleSubmit = event => {
         event.preventDefault();
@@ -29,27 +29,30 @@ const HomePageContextProvider = ({ children }) => {
 
         dispatch(setUser(user));
         dispatch(setContacts(newContacts));
-    }
+    };
 
     return (
-        <HomePageContext.Provider value={{
-            onSelectUser,
-            selectedUserToken,
-            contacts,
-            handleSubmit,
-            userToken
-        }}>
+        <HomePageContext.Provider
+            value={{
+                onSelectUser,
+                selectedUserToken,
+                contacts,
+                handleSubmit,
+                userToken
+            }}
+        >
             {children}
         </HomePageContext.Provider>
     );
-}
+};
 
 const useHomePageContext = () => useContext(HomePageContext);
 
-const withHomePageContext = Component => () => (
-	<HomePageContextProvider>
-		<Component />
-	</HomePageContextProvider>
-);
+const withHomePageContext = Component => () =>
+    (
+        <HomePageContextProvider>
+            <Component />
+        </HomePageContextProvider>
+    );
 
-export { useHomePageContext, withHomePageContext }
+export { useHomePageContext, withHomePageContext };

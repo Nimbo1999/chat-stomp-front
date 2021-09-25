@@ -22,7 +22,7 @@ const contacts = [
     {
         token: '6666666666',
         name: 'Renan Araújo'
-    },
+    }
 ];
 
 export default contacts;

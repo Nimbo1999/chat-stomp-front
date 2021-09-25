@@ -7,16 +7,16 @@ const theme = {
         strongGreen: '#219653',
         white: '#FFFFFF',
         background: '#F2F2F2',
-        text: '#4F4F4F',
+        text: '#4F4F4F'
     },
 
     breakPoints: {
         sm: '576px',
         md: '768px',
-        lg: '992px',
+        lg: '992px'
     },
 
     spacing: value => `${value * 8}px`
-}
+};
 
 export default theme;

@@ -5,7 +5,7 @@ import userReducer from './user/userSlice.reducer';
 
 const rootReducer = combineReducers({
     user: userReducer,
-    channel: channelReducer,
+    channel: channelReducer
 });
 
 export default rootReducer;

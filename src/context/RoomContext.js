@@ -2,7 +2,10 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
-import { selectCurrentRoomToken, selectCurrentRoomRecipientToken } from '../redux/channel/channel.selector';
+import {
+    selectCurrentRoomToken,
+    selectCurrentRoomRecipientToken
+} from '../redux/channel/channel.selector';
 import { insertMessage } from '../redux/channel/channel.reducer';
 
 import { useStompClientContext } from './StompClientContext';
@@ -42,7 +45,7 @@ const RoomContextProvider = ({ children }) => {
 
                 setSubscription(null);
             }
-        }
+        };
     }, [subscription, currentRoomToken]);
 
     const onReceiveMessage = stompMessage => {
@@ -50,7 +53,7 @@ const RoomContextProvider = ({ children }) => {
         const payload = JSON.parse(body);
 
         return incomingMessageHandler(payload, ack, nack);
-    }
+    };
 
     const incomingMessageHandler = async (payload, ack, nack) => {
         const transaction = begin();
@@ -73,14 +76,11 @@ const RoomContextProvider = ({ children }) => {
 
             transaction.commit();
         }
-
-    }
+    };
 
     const addIncomingMessageToCurrentChatRoom = payload => includeMessageInChat(payload);
 
-    const includeMessageInChat = payload => dispatch(
-        insertMessage(payload)
-    );
+    const includeMessageInChat = payload => dispatch(insertMessage(payload));
 
     const onSubmitMessage = event => {
         event.preventDefault();
@@ -99,7 +99,7 @@ const RoomContextProvider = ({ children }) => {
         setTextMessage('');
 
         transaction.commit();
-    }
+    };
 
     const handleOnChangeMessage = ({ target }) => {
         const { value } = target;
@@ -107,7 +107,7 @@ const RoomContextProvider = ({ children }) => {
         if (error) setError('');
 
         setTextMessage(value.trimStart());
-    }
+    };
 
     return (
         <RoomContext.Provider
@@ -122,14 +122,15 @@ const RoomContextProvider = ({ children }) => {
             {children}
         </RoomContext.Provider>
     );
-}
+};
 
 const useRoomContext = () => useContext(RoomContext);
 
-const withRoomContext = Component => () => (
-	<RoomContextProvider>
-		<Component />
-	</RoomContextProvider>
-);
+const withRoomContext = Component => () =>
+    (
+        <RoomContextProvider>
+            <Component />
+        </RoomContextProvider>
+    );
 
-export { useRoomContext, withRoomContext }
+export { useRoomContext, withRoomContext };
