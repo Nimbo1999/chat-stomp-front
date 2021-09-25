@@ -11,10 +11,16 @@ const Text = styled(Paragraph)`
 const CardMessage = styled(Card)`
     width: fit-content;
 
-    ${({ isRecipient }) => isRecipient && css`
-        background: ${({ theme }) => theme.pallet.lightBlue};
-        border: 1px solid ${({ theme }) => theme.pallet.blue};
-    `}
+    & > div {
+        padding: ${({ theme }) => theme.spacing(2)};
+    }
+
+    ${({ isRecipient }) =>
+        isRecipient &&
+        css`
+            background: ${({ theme }) => theme.pallet.lightBlue};
+            border: 1px solid ${({ theme }) => theme.pallet.blue};
+        `}
 `;
 
 const JustifyContent = styled.div`
@@ -22,4 +28,4 @@ const JustifyContent = styled.div`
     justify-content: ${({ justify }) => `flex-${justify}`};
 `;
 
-export { Text, JustifyContent, CardMessage }
+export { Text, JustifyContent, CardMessage };

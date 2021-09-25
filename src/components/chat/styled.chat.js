@@ -6,7 +6,7 @@ const ChatWrapper = styled(List)`
     display: flex;
     flex-direction: column-reverse;
     overflow: hidden scroll;
-    margin-bottom: ${({theme}) => theme.spacing(2)};
+    margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export { ChatWrapper };

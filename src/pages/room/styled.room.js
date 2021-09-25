@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import { Layout } from 'antd';
 
-const { Content } = Layout
+const { Content } = Layout;
 
 const RoomContent = styled(Content)`
     display: flex;
     flex-direction: column;
 
-    padding: ${({theme}) => theme.spacing(2)};
+    padding: ${({ theme }) => `0px ${theme.spacing(2)} ${theme.spacing(2)}`};
 `;
 
 const LoadingRoomWrapper = styled.div`
@@ -19,4 +19,4 @@ const LoadingRoomWrapper = styled.div`
     height: 100%;
 `;
 
-export { RoomContent, LoadingRoomWrapper }
+export { RoomContent, LoadingRoomWrapper };
