@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch, batch } from 'react-redux';
-import { Layout, PageHeader, Button, Spin, message } from 'antd';
+import { Layout, Button, Spin, message } from 'antd';
 
 import { respondToCloseRoom, setCurrentRoom } from '../../redux/channel/channel.reducer';
 import { selectCurrentRoom, isLoading } from '../../redux/channel/channel.selector';
@@ -16,7 +16,7 @@ import ROUTES_CONSTANTS from '../routes.constants';
 import Chat from '../../components/chat/Chat';
 import CommentaryInput from '../../components/commentary/CommentaryInput';
 
-import { RoomContent, LoadingRoomWrapper } from './styled.room';
+import { RoomContent, LoadingRoomWrapper, PageHeader, Title } from './styled.room';
 
 const RoomPage = () => {
     const { token } = useParams();
@@ -53,6 +53,13 @@ const RoomPage = () => {
         });
     };
 
+    const renderPageHeaderTitle = () => (
+        <Title>
+            <span className="main">{getRoomTitle()}</span>
+            <span>Online</span>
+        </Title>
+    );
+
     const getRoomTitle = () => {
         if (userToken === currentRoom.sender.token) {
             return currentRoom.recipient.name;
@@ -66,14 +73,13 @@ const RoomPage = () => {
             <Layout>
                 <PageHeader
                     onBack={onGoBack}
-                    title={getRoomTitle()}
+                    title={renderPageHeaderTitle()}
                     subTitle={currentRoom.recipient.status}
                     extra={
                         <Button type="link" onClick={closeRoom} htmlType="button" loading={loading}>
                             Encerrar bate-papo
                         </Button>
                     }
-                    style={{ background: '#ffffff' }}
                 />
 
                 <RoomContent>
