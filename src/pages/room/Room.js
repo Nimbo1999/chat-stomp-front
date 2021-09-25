@@ -1,9 +1,9 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch, batch } from 'react-redux';
 import { Layout, PageHeader, Button, Spin, message } from 'antd';
 
-import { respondToCloseRoom, setCurrentRoom, pushToAvailableRooms } from '../../redux/channel/channel.reducer';
+import { respondToCloseRoom, setCurrentRoom } from '../../redux/channel/channel.reducer';
 import { selectCurrentRoom, isLoading } from '../../redux/channel/channel.selector';
 import { selectUserToken } from '../../redux/user/userSlice.reducer';
 import closeRoomAction from '../../redux/channel/closeRoom.action';
@@ -31,27 +31,27 @@ const RoomPage = () => {
         dispatch(getRoomAction({ roomToken: token, onSuccess: onGetRoomSuccess }));
     }, [token, dispatch]);
 
-    const onGetRoomSuccess = room => dispatch(
-        setCurrentRoom(room)
-    );
+    const onGetRoomSuccess = room => dispatch(setCurrentRoom(room));
 
     const onGoBack = () => {
         dispatch(setCurrentRoom(null));
 
         history.replace(ROUTES_CONSTANTS.ROOM);
-    }
+    };
 
     const closeRoom = () => {
         batch(() => {
             dispatch(respondToCloseRoom());
 
-            dispatch(closeRoomAction(() => {
-                message.success('Bate-papo encerrado com sucesso!');
+            dispatch(
+                closeRoomAction(() => {
+                    message.success('Bate-papo encerrado com sucesso!');
 
-                history.push(ROUTES_CONSTANTS.ROOM);
-            }));
+                    history.push(ROUTES_CONSTANTS.ROOM);
+                })
+            );
         });
-    }
+    };
 
     const getRoomTitle = () => {
         if (userToken === currentRoom.sender.token) {
@@ -59,34 +59,30 @@ const RoomPage = () => {
         }
 
         return currentRoom.sender.name;
-    }
+    };
 
-    if (currentRoom && currentRoom.recipient) return (
-        <Layout>
-            <PageHeader
-                onBack={ onGoBack }
-                title={ getRoomTitle() }
-                subTitle={currentRoom.recipient.status}
-                extra={(
-                    <Button
-                        type="link"
-                        onClick={ closeRoom }
-                        htmlType="button"
-                        loading={ loading }
-                    >
-                        Encerrar bate-papo
-                    </Button>
-                )}
-                style={{ background: '#ffffff' }}
-            />
+    if (currentRoom && currentRoom.recipient)
+        return (
+            <Layout>
+                <PageHeader
+                    onBack={onGoBack}
+                    title={getRoomTitle()}
+                    subTitle={currentRoom.recipient.status}
+                    extra={
+                        <Button type="link" onClick={closeRoom} htmlType="button" loading={loading}>
+                            Encerrar bate-papo
+                        </Button>
+                    }
+                    style={{ background: '#ffffff' }}
+                />
 
-            <RoomContent>
-                <Chat />
+                <RoomContent>
+                    <Chat />
 
-                <CommentaryInput />
-            </RoomContent>
-        </Layout>
-    );
+                    <CommentaryInput />
+                </RoomContent>
+            </Layout>
+        );
 
     return (
         <Layout>
@@ -95,6 +91,6 @@ const RoomPage = () => {
             </LoadingRoomWrapper>
         </Layout>
     );
-}
+};
 
 export default withRoomContext(RoomPage);
