@@ -6,6 +6,12 @@ const { Paragraph } = Typography;
 const Text = styled(Paragraph)`
     text-align: ${({ justify }) => justify};
     width: fit-content;
+    margin-bottom: 0.25em !important;
+
+    span {
+        line-height: 0.875rem;
+        color: ${({ theme }) => theme.pallet.text};
+    }
 `;
 
 const CardMessage = styled(Card)`
