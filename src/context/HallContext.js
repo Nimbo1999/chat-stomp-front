@@ -15,7 +15,7 @@ const HallContext = createContext({});
 const HallContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
-    const { addHallSubscriber, connected, begin } = useStompClientContext();
+    const { addHallSubscriber, connected } = useStompClientContext();
 
     const currentRoomToken = useSelector(selectCurrentRoomToken);
     const availableRooms = useSelector(selectAvailableRooms);
@@ -36,22 +36,18 @@ const HallContextProvider = ({ children }) => {
             subscription.unsubscribe();
             setSubscription(null);
         }
-    }, [currentRoomToken, availableRooms]);
+    }, [currentRoomToken, availableRooms.lenght]);
 
     const onReceiveMessage = stompMessage => {
-        const { body, ack, nack } = stompMessage;
+        const { body } = stompMessage;
 
         const payload = JSON.parse(body);
 
-        return incomingMessageHandler(payload, ack, nack);
+        return incomingMessageHandler(payload);
     };
 
-    const incomingMessageHandler = (payload, ack, nack) => {
-        const transaction = begin();
-
+    const incomingMessageHandler = payload => {
         if (!payload.token || currentRoomToken === payload.token) {
-            ack({ transaction: transaction.id });
-            transaction.commit();
             return;
         }
 
@@ -60,25 +56,16 @@ const HallContextProvider = ({ children }) => {
         showMessageToasty(sender, recipient);
 
         if (hasOpenedRoomWithPayloadToken(payload)) {
-            ack({ transaction: transaction.id });
-            transaction.commit();
             return dispatch(newMessageOnRoom(payload.token));
         }
 
         try {
             getRoomContent({
                 roomToken: payload.token,
-                onSuccess: room => {
-                    ack({ transaction: transaction.id });
-                    transaction.commit();
-
-                    onGetRoomContentSuccess(room);
-                }
+                onSuccess: room => onGetRoomContentSuccess(room)
             });
         } catch (err) {
-            nack({ transaction: transaction.id });
-
-            transaction.commit();
+            console.info(err);
         }
     };
 

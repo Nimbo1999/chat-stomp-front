@@ -48,7 +48,10 @@ function Message({ justify = 'start', text, date }) {
                         <CardMessage isRecipient={justify === 'start'}>
                             <Text>{formatText()}</Text>
 
-                            <Meta description={formatDate()} style={{ textAlign: justify }} />
+                            <Meta
+                                description={formatDate()}
+                                style={{ textAlign: justify, fontSize: '.75rem' }}
+                            />
                         </CardMessage>
                     </JustifyContent>
                 </Col>

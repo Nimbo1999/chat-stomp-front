@@ -56,29 +56,23 @@ const RoomContextProvider = ({ children }) => {
     };
 
     const incomingMessageHandler = async (payload, ack, nack) => {
-        const transaction = begin();
-
         try {
             const data = await messagesService.getMessage(payload.messageToken);
 
-            addIncomingMessageToCurrentChatRoom({
+            includeMessageInChat({
                 text: data.content,
                 date: data.timestamp,
                 token: payload.messageToken,
                 userToken: data.userToken
             });
 
-            ack({ transaction: transaction.id });
-
-            transaction.commit();
+            if (data.userToken !== userToken) {
+                ack();
+            }
         } catch (err) {
-            nack({ transaction: transaction.id });
-
-            transaction.commit();
+            nack();
         }
     };
-
-    const addIncomingMessageToCurrentChatRoom = payload => includeMessageInChat(payload);
 
     const includeMessageInChat = payload => dispatch(insertMessage(payload));
 
