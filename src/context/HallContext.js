@@ -94,7 +94,7 @@ const HallContextProvider = ({ children }) => {
 
     useEffect(() => getAvailableRooms(), []);
 
-    return <HallContext.Provider>{children}</HallContext.Provider>;
+    return <HallContext.Provider value={{}}>{children}</HallContext.Provider>;
 };
 
 const useHallContext = () => useContext(HallContext);

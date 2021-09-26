@@ -12,19 +12,17 @@ import GlobalStyles from './layout/globalStyles';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <GlobalStyles />
+    <ThemeProvider theme={theme}>
+        <GlobalStyles />
 
-            <Provider store={store}>
-                <BrowserRouter>
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <App />
-                    </Suspense>
-                </BrowserRouter>
-            </Provider>
-        </ThemeProvider>
-    </React.StrictMode>,
+        <Provider store={store}>
+            <BrowserRouter>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <App />
+                </Suspense>
+            </BrowserRouter>
+        </Provider>
+    </ThemeProvider>,
     document.getElementById('root')
 );
 

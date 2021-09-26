@@ -6,8 +6,6 @@ const { Content } = Layout;
 const RoomContent = styled(Content)`
     display: flex;
     flex-direction: column;
-
-    padding: ${({ theme }) => `0px ${theme.spacing(2)} ${theme.spacing(2)}`};
 `;
 
 const LoadingRoomWrapper = styled.div`

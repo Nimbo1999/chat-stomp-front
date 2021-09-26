@@ -6,7 +6,7 @@ import { Text, JustifyContent, CardMessage } from './styled.message';
 
 const { Meta } = Card;
 
-function Message({ justify = 'start', text, date }) {
+const Message = ({ justify = 'start', text, date, style }) => {
     const formatDate = () => {
         const today = dayjs().format('YYYY-MM-DD');
         const getMessageDateWithoutTime = dayjs(date).format('YYYY-MM-DD');
@@ -31,17 +31,17 @@ function Message({ justify = 'start', text, date }) {
     const renderTextWithLineBreak = messages =>
         messages.map((text, i) =>
             i === messages.length - 1 ? (
-                <span>{text}</span>
+                <span key={text.concat(i)}>{text}</span>
             ) : (
-                <>
+                <div key={text.concat(i)}>
                     <span>{text}</span>
                     <br />
-                </>
+                </div>
             )
         );
 
     return (
-        <List.Item>
+        <List.Item style={style}>
             <Row justify={justify} style={{ width: '100%' }}>
                 <Col span={20}>
                     <JustifyContent justify={justify}>
@@ -58,6 +58,6 @@ function Message({ justify = 'start', text, date }) {
             </Row>
         </List.Item>
     );
-}
+};
 
 export default Message;
