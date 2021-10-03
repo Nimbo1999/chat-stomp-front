@@ -13,7 +13,7 @@ COPY ./ /app/
 RUN yarn build
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginx:latest
+FROM docker2021repos/nginx:latest
 
 COPY --from=build-stage /app/build/ /usr/share/nginx/html
 
