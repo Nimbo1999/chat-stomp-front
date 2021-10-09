@@ -1,27 +1,31 @@
 const contacts = [
     {
-        token: '1111111111',
+        token: '11111',
+        name: 'Arthur Garcia'
+    },
+    {
+        token: '22222',
         name: 'Danilo La Terra'
     },
     {
-        token: '2222222222',
+        token: '33333',
+        name: 'Geovanna Lima'
+    },
+    {
+        token: '44444',
         name: 'João Gabriel'
     },
     {
-        token: '3333333333',
+        token: '55555',
+        name: 'Lourrany Galvão'
+    },
+    {
+        token: '77777',
         name: 'Matheus Lopes'
     },
     {
-        token: '4444444444',
+        token: '88888',
         name: 'Maximiliano Ferreira'
-    },
-    {
-        token: '5555555555',
-        name: 'Rafael thomase'
-    },
-    {
-        token: '6666666666',
-        name: 'Renan Araújo'
     }
 ];
 
