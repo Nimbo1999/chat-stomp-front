@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
@@ -68,25 +68,58 @@ const StompClientContextProvider = ({ children }) => {
         const socketConnection = new SockJS(
             API_CONSTANTS.BASE_URL.concat(API_CONSTANTS.WEB_SOCKET.ROOT)
         );
+        socketConnection.onerror = () => {
+            throw new Error('WebSocket Connection Error!');
+        };
 
         const client = Stomp.over(socketConnection);
-
         setStompClient(client);
     };
 
-    const onConnectionSucceeded = () => setConnected(stompClient.connected);
+    const disconnectStompClient = () => {
+        if (stompClient && stompClient.connected) {
+            stompClient.disconnect(() => setConnected(stompClient.connected));
+        }
+    };
+
+    const onConnectionSucceeded = () => {
+        setConnected(stompClient.connected);
+    };
+
+    const connectToStomp = useCallback(() => {
+        if (stompClient) {
+            stompClient.connect({}, onConnectionSucceeded, err => console.error(err));
+        }
+    }, [stompClient]);
+
+    const reconnectStompClient = () => {
+        if (
+            stompClient &&
+            !stompClient.connected &&
+            stompClient.ws.readyState === WebSocket.CLOSED
+        ) {
+            return setStompClient(null);
+        }
+
+        throw new Error('Unabled to create a new connection to Stomp client!');
+    };
 
     useEffect(() => {
         if (stompClient === null) {
             initializeStompClient();
         } else {
-            stompClient.connect({}, onConnectionSucceeded, err => console.error(err));
+            connectToStomp();
         }
+    }, [stompClient, connectToStomp]);
+
+    useEffect(() => {
+        window.addEventListener('online', reconnectStompClient);
+
+        window.addEventListener('offline', disconnectStompClient);
 
         return () => {
-            if (stompClient && stompClient.connected) {
-                console.log('Opa!!!!!!!!!!!!!');
-            }
+            window.removeEventListener('online', reconnectStompClient);
+            window.removeEventListener('offline', disconnectStompClient);
         };
     }, [stompClient]);
 
