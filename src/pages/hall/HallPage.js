@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Switch, useHistory } from 'react-router-dom';
-import { List, Avatar, Typography, Button, Row, Col, Alert, Badge } from 'antd';
+import { List, Avatar, Typography, Button, Row, Col, Alert, Badge, message } from 'antd';
 import { MessageTwoTone } from '@ant-design/icons';
 
 import {
@@ -25,11 +25,12 @@ import EmptyPage from '../empty/Empty';
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
 import NetworkOfflineAlert from '../../components/network-offline-alert/NetworkOfflineAlert';
 
-import { withStompClientContext } from '../../context/StompClientContext';
+import { useStompClientContext, withStompClientContext } from '../../context/StompClientContext';
 import { withHallContext } from '../../context/HallContext';
 
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.hall';
 import { useTheme } from 'styled-components';
+import NetworkConnectionError from '../../exceptions/NetworkConnectionError';
 
 const { Title } = Typography;
 
@@ -38,15 +39,30 @@ function HallPage() {
     const history = useHistory();
     const theme = useTheme();
 
+    const { connected } = useStompClientContext();
+
     const error = useSelector(selectError);
     const availableRooms = useSelector(selectAvailableRooms);
     const currentRoom = useSelector(selectCurrentRoom);
     const user = useSelector(selectUser);
 
     function onSelectRoom(token) {
-        dispatch(removeBadges(token));
+        try {
+            verifyIfHasConnection();
+            dispatch(removeBadges(token));
+            history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
+        } catch (e) {
+            if (e.name === NetworkConnectionError.name) {
+                message.warn(e.message);
+            }
+        }
+    }
 
-        history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
+    function verifyIfHasConnection() {
+        if (!connected)
+            throw new NetworkConnectionError(
+                'Verifique sua conexão com a internet e tente novamente mais tarde!'
+            );
     }
 
     function showCreationRoomCard() {
