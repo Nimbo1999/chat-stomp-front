@@ -9,6 +9,7 @@ import { API_CONSTANTS } from '../constants/api.constants';
 import { ACK_VALUES } from '../constants/stomp.constants';
 
 import { getHallSubscriptionId, getRoomSubscriptionId } from '../utils/stomp.utils';
+import NetworkConnectionError from '../exceptions/NetworkConnectionError';
 
 const StompClientContext = createContext({});
 
@@ -104,6 +105,13 @@ const StompClientContextProvider = ({ children }) => {
         throw new Error('Unabled to create a new connection to Stomp client!');
     };
 
+    function verifyIfHasConnection() {
+        if (!connected)
+            throw new NetworkConnectionError(
+                'Verifique sua conexão com a internet e tente novamente mais tarde!'
+            );
+    }
+
     useEffect(() => {
         if (stompClient === null) {
             initializeStompClient();
@@ -130,7 +138,8 @@ const StompClientContextProvider = ({ children }) => {
                 addHallSubscriber,
                 addRoomSubscriber,
                 send,
-                begin
+                begin,
+                verifyIfHasConnection
             }}
         >
             {children}

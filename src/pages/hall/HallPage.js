@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Switch, useHistory } from 'react-router-dom';
 import { List, Avatar, Typography, Button, Row, Col, Alert, Badge, message } from 'antd';
 import { MessageTwoTone } from '@ant-design/icons';
+import { useTheme } from 'styled-components';
 
 import {
     closeError,
@@ -28,9 +29,9 @@ import NetworkOfflineAlert from '../../components/network-offline-alert/NetworkO
 import { useStompClientContext, withStompClientContext } from '../../context/StompClientContext';
 import { withHallContext } from '../../context/HallContext';
 
+import { handleNetworkError } from '../../exceptions/NetworkConnectionError';
+
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.hall';
-import { useTheme } from 'styled-components';
-import NetworkConnectionError from '../../exceptions/NetworkConnectionError';
 
 const { Title } = Typography;
 
@@ -39,7 +40,7 @@ function HallPage() {
     const history = useHistory();
     const theme = useTheme();
 
-    const { connected } = useStompClientContext();
+    const { verifyIfHasConnection } = useStompClientContext();
 
     const error = useSelector(selectError);
     const availableRooms = useSelector(selectAvailableRooms);
@@ -52,21 +53,17 @@ function HallPage() {
             dispatch(removeBadges(token));
             history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
         } catch (e) {
-            if (e.name === NetworkConnectionError.name) {
-                message.warn(e.message);
-            }
+            handleNetworkError(e);
         }
     }
 
-    function verifyIfHasConnection() {
-        if (!connected)
-            throw new NetworkConnectionError(
-                'Verifique sua conexão com a internet e tente novamente mais tarde!'
-            );
-    }
-
     function showCreationRoomCard() {
-        dispatch(setShowNewRoomSection(true));
+        try {
+            verifyIfHasConnection();
+            dispatch(setShowNewRoomSection(true));
+        } catch (e) {
+            handleNetworkError(e);
+        }
     }
 
     function getRoomTitle(sender, recipient) {
