@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch, batch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { Card, Select, Button, message } from 'antd';
 
 import ROUTES_CONSTANTS from '../../pages/routes.constants';
 
@@ -13,13 +14,17 @@ import {
 } from '../../redux/channel/channel.selector';
 import { setShowNewRoomSection, setSelectedRoomUser } from '../../redux/channel/channel.reducer';
 
-import { Card, Select, Button, message } from 'antd';
+import { useStompClientContext } from '../../context/StompClientContext';
+
+import { handleNetworkError } from '../../exceptions/NetworkConnectionError';
 
 const { Option } = Select;
 
 function CreateRoomCard() {
     const history = useHistory();
     const dispatch = useDispatch();
+
+    const { verifyIfHasConnection } = useStompClientContext();
 
     const contacts = useSelector(selectContacts);
     const loading = useSelector(isLoading);
@@ -39,14 +44,20 @@ function CreateRoomCard() {
             dispatch(setSelectedRoomUser({ token: '' }));
         });
 
-    const onCreateNewRoom = () =>
-        dispatch(
-            createNewRoomAction(({ token }) => {
-                message.success('Sala criada com sucesso!');
+    const onCreateNewRoom = () => {
+        try {
+            verifyIfHasConnection();
+            dispatch(
+                createNewRoomAction(({ token }) => {
+                    message.success('Sala criada com sucesso!');
 
-                history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(token)}`);
-            })
-        );
+                    history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(token)}`);
+                })
+            );
+        } catch (e) {
+            handleNetworkError(e);
+        }
+    };
 
     if (isVisible)
         return (

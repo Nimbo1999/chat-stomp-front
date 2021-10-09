@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Switch, useHistory } from 'react-router-dom';
-import { List, Avatar, Typography, Button, Row, Col, Alert, Badge } from 'antd';
+import { List, Avatar, Typography, Button, Row, Col, Alert, Badge, message } from 'antd';
 import { MessageTwoTone } from '@ant-design/icons';
+import { useTheme } from 'styled-components';
 
 import {
     closeError,
@@ -23,12 +24,14 @@ import RoomPage from '../room/Room';
 import EmptyPage from '../empty/Empty';
 
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
+import NetworkOfflineAlert from '../../components/network-offline-alert/NetworkOfflineAlert';
 
-import { withStompClientContext } from '../../context/StompClientContext';
+import { useStompClientContext, withStompClientContext } from '../../context/StompClientContext';
 import { withHallContext } from '../../context/HallContext';
 
+import { handleNetworkError } from '../../exceptions/NetworkConnectionError';
+
 import { ChatWrapper, ChatSider, ItemWrapper } from './styled.hall';
-import { useTheme } from 'styled-components';
 
 const { Title } = Typography;
 
@@ -37,19 +40,30 @@ function HallPage() {
     const history = useHistory();
     const theme = useTheme();
 
+    const { verifyIfHasConnection } = useStompClientContext();
+
     const error = useSelector(selectError);
     const availableRooms = useSelector(selectAvailableRooms);
     const currentRoom = useSelector(selectCurrentRoom);
     const user = useSelector(selectUser);
 
     function onSelectRoom(token) {
-        dispatch(removeBadges(token));
-
-        history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
+        try {
+            verifyIfHasConnection();
+            dispatch(removeBadges(token));
+            history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
+        } catch (e) {
+            handleNetworkError(e);
+        }
     }
 
     function showCreationRoomCard() {
-        dispatch(setShowNewRoomSection(true));
+        try {
+            verifyIfHasConnection();
+            dispatch(setShowNewRoomSection(true));
+        } catch (e) {
+            handleNetworkError(e);
+        }
     }
 
     function getRoomTitle(sender, recipient) {
@@ -64,6 +78,8 @@ function HallPage() {
 
     return (
         <ChatWrapper style={{ height: '100%' }}>
+            <NetworkOfflineAlert />
+
             <ChatSider width={300}>
                 <List
                     style={{ padding: '16px 24px' }}
