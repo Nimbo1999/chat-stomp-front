@@ -1,14 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getUserAvailablesRooms from '../redux/channel/getUserAvailablesRooms.action';
 import getRoomAction from '../redux/channel/getRoom.action';
 import { newMessageOnRoom, pushToAvailableRooms } from '../redux/channel/channel.reducer';
-import { selectCurrentRoomToken, selectAvailableRooms } from '../redux/channel/channel.selector';
+import {
+    selectCurrentRoomToken,
+    selectAvailableRooms,
+    selectAvailableRoomsLength
+} from '../redux/channel/channel.selector';
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 
 import { useStompClientContext } from './StompClientContext';
+
+import audio from '../audios/new-message-hall.mp3';
 
 const HallContext = createContext({});
 
@@ -19,7 +25,9 @@ const HallContextProvider = ({ children }) => {
 
     const currentRoomToken = useSelector(selectCurrentRoomToken);
     const availableRooms = useSelector(selectAvailableRooms);
+    const availableRoomsLength = useSelector(selectAvailableRoomsLength);
     const userToken = useSelector(selectUserToken);
+    const audioRef = useRef(new Audio(audio));
 
     const [subscription, setSubscription] = useState(null);
 
@@ -43,7 +51,7 @@ const HallContextProvider = ({ children }) => {
             subscription.unsubscribe();
             setSubscription(null);
         }
-    }, [currentRoomToken, availableRooms.lenght]);
+    }, [currentRoomToken, availableRoomsLength]);
 
     const onReceiveMessage = stompMessage => {
         const { body } = stompMessage;
@@ -77,6 +85,8 @@ const HallContextProvider = ({ children }) => {
     };
 
     const showMessageToasty = (sender, recipient) => {
+        audioRef.current.play();
+
         if (sender.token === userToken) {
             return message.info(`Nova mensagem de ${recipient.name}`);
         }

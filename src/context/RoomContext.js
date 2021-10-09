@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
@@ -12,6 +12,8 @@ import { useStompClientContext } from './StompClientContext';
 
 import MessagesService from '../services/Messages';
 
+import audio from '../audios/new-message-room.mp3';
+
 const RoomContext = createContext({});
 
 const messagesService = new MessagesService();
@@ -24,6 +26,7 @@ const RoomContextProvider = ({ children }) => {
     const userToken = useSelector(selectUserToken);
     const currentRoomToken = useSelector(selectCurrentRoomToken);
     const currentRoomRecipientToken = useSelector(selectCurrentRoomRecipientToken);
+    const audioRef = useRef(new Audio(audio));
 
     const [subscription, setSubscription] = useState(null);
 
@@ -65,12 +68,13 @@ const RoomContextProvider = ({ children }) => {
                 token: payload.messageToken,
                 userToken: data.userToken
             });
+            audioRef.current.play();
 
             if (data.userToken !== userToken) {
-                ack();
+                ack({ receipt: payload.messageToken });
             }
         } catch (err) {
-            nack();
+            nack({ receipt: payload.messageToken });
         }
     };
 
