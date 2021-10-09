@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import {
     selectCurrentRoomToken,
     selectCurrentRoomRecipientToken
 } from '../redux/channel/channel.selector';
-import { insertMessage } from '../redux/channel/channel.reducer';
+import { insertMessage, setCurrentRoom } from '../redux/channel/channel.reducer';
 
 import { useStompClientContext } from './StompClientContext';
 
@@ -20,8 +21,9 @@ const messagesService = new MessagesService();
 
 const RoomContextProvider = ({ children }) => {
     const dispatch = useDispatch();
+    const history = useHistory();
 
-    const { send, addRoomSubscriber, begin } = useStompClientContext();
+    const { send, addRoomSubscriber, begin, connected } = useStompClientContext();
 
     const userToken = useSelector(selectUserToken);
     const currentRoomToken = useSelector(selectCurrentRoomToken);
@@ -33,10 +35,21 @@ const RoomContextProvider = ({ children }) => {
     const [textMessage, setTextMessage] = useState('');
     const [error, setError] = useState('');
 
+    const unSubscribeToRoom = () => {
+        subscription.unsubscribe();
+        setSubscription(null);
+    };
+
     useEffect(() => {
+        if (!connected && subscription && subscription.unsubscribe) {
+            unSubscribeToRoom();
+            dispatch(setCurrentRoom(null));
+            return history.goBack();
+        }
+
         if (!currentRoomToken || !currentRoomRecipientToken) return;
 
-        if (!subscription) {
+        if (connected && !subscription) {
             return setSubscription(
                 addRoomSubscriber(currentRoomRecipientToken, currentRoomToken, onReceiveMessage)
             );
@@ -44,12 +57,10 @@ const RoomContextProvider = ({ children }) => {
 
         return () => {
             if (subscription && subscription.unsubscribe) {
-                subscription.unsubscribe();
-
-                setSubscription(null);
+                unSubscribeToRoom();
             }
         };
-    }, [subscription, currentRoomToken]);
+    }, [subscription, currentRoomToken, connected]);
 
     const onReceiveMessage = stompMessage => {
         const { body, ack, nack } = stompMessage;

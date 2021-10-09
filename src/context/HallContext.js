@@ -41,7 +41,7 @@ const HallContextProvider = ({ children }) => {
             return subscription ? clearSubscription() : undefined;
         }
 
-        if (!subscription) {
+        if (connected && !subscription) {
             setSubscription(addHallSubscriber(onReceiveMessage));
         }
     }, [subscription, connected]);
