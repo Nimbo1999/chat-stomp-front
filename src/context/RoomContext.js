@@ -91,7 +91,6 @@ const RoomContextProvider = ({ children }) => {
 
         send(message, transaction);
         setTextMessage('');
-
         transaction.commit();
     };
 

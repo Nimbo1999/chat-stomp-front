@@ -34,13 +34,23 @@ function Chat() {
         const { current } = listRef;
 
         if (current && messages.length) {
-            current.scrollToRow(messages.length);
+            current.scrollToRow(numberOfRows);
         }
     }, [listRef.current]);
 
     return (
         <ChatWrapper>
-            <InfiniteLoader isRowLoaded={isRowLoaded} loadMoreRows={loadMoreRows}>
+            <InfiniteLoader
+                isRowLoaded={isRowLoaded}
+                loadMoreRows={loadMoreRows}
+                /**
+                 * @todo Precisamos da informação de quantas mensagens a lista possui. coloquei o valor de 1000
+                 * enquanto não possuo essa informação.
+                 * */
+                rowCount={1000}
+                minimumBatchSize={10}
+                threshold={10}
+            >
                 {({ onRowsRendered, registerChild }) => {
                     registerChild(listRef);
 
@@ -48,35 +58,38 @@ function Chat() {
                         <AutoSizer>
                             {({ width, height }) => (
                                 <List
-                                    height={height}
-                                    width={width}
                                     ref={listRef}
                                     rowCount={numberOfRows}
                                     onRowsRendered={onRowsRendered}
                                     rowHeight={cache.current.rowHeight}
                                     deferredMeasurementCache={cache.current}
                                     style={{ padding: `0px ${theme.spacing(2)}` }}
-                                    rowRenderer={({ index, parent, key, style }) => (
-                                        <CellMeasurer
-                                            cache={cache.current}
-                                            parent={parent}
-                                            columnIndex={0}
-                                            key={key}
-                                            rowIndex={index}
-                                        >
-                                            <Message
+                                    rowRenderer={({ index, parent, key, style }) =>
+                                        messages[index] ? (
+                                            <CellMeasurer
+                                                cache={cache.current}
+                                                parent={parent}
+                                                columnIndex={0}
                                                 key={key}
-                                                justify={
-                                                    messages[index].userToken === userToken
-                                                        ? 'end'
-                                                        : 'start'
-                                                }
-                                                style={style}
-                                                text={messages[index].text}
-                                                date={messages[index].date}
-                                            />
-                                        </CellMeasurer>
-                                    )}
+                                                rowIndex={index}
+                                            >
+                                                <Message
+                                                    justify={
+                                                        messages[index].userToken === userToken
+                                                            ? 'end'
+                                                            : 'start'
+                                                    }
+                                                    style={style}
+                                                    text={messages[index].text}
+                                                    date={messages[index].date}
+                                                />
+                                            </CellMeasurer>
+                                        ) : (
+                                            <span>No Row!!!</span>
+                                        )
+                                    }
+                                    height={height}
+                                    width={width}
                                 />
                             )}
                         </AutoSizer>

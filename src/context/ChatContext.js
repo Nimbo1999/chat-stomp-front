@@ -11,16 +11,19 @@ const ChatContextProvider = ({ children }) => {
     const [page, setPage] = useState(0);
 
     const [hasNextPage, setHasNextPage] = useState(false);
-    const [isNextPageLoading, setIsNextPageLoading] = useState(false);
 
-    const loadMoreRows = () => {
-        if (isNextPageLoading) return;
+    /**
+     * @todo Finalizar a função de recuperar mais mensagens de uma sala.
+     *  */
+    const loadMoreRows = () =>
+        new Promise(resolve => {
+            setHasNextPage(true);
+            console.log('loadMoreRows call!!');
+            console.log('Get more messages callback, current on page ', page);
+            setTimeout(() => resolve(), 1000);
+        });
 
-        // TODO: get more messages
-        console.log('Get more messages callback, current on page ', page);
-    };
-
-    const isRowLoaded = ({ index }) => !hasNextPage || index < messages.length;
+    const isRowLoaded = ({ index }) => !!messages[index];
 
     const numberOfRows = hasNextPage ? messages.length + 1 : messages.length;
 
