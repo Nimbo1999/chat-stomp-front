@@ -23,6 +23,7 @@ import RoomPage from '../room/Room';
 import EmptyPage from '../empty/Empty';
 
 import CreateRoomCard from '../../components/create-room-card/CreateRoomCard';
+import NetworkOfflineAlert from '../../components/network-offline-alert/NetworkOfflineAlert';
 
 import { withStompClientContext } from '../../context/StompClientContext';
 import { withHallContext } from '../../context/HallContext';
@@ -64,6 +65,8 @@ function HallPage() {
 
     return (
         <ChatWrapper style={{ height: '100%' }}>
+            <NetworkOfflineAlert />
+
             <ChatSider width={300}>
                 <List
                     style={{ padding: '16px 24px' }}

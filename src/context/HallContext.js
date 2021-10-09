@@ -23,8 +23,15 @@ const HallContextProvider = ({ children }) => {
 
     const [subscription, setSubscription] = useState(null);
 
+    const clearSubscription = () => {
+        if (subscription.unsubscribe) subscription.unsubscribe();
+        setSubscription(null);
+    };
+
     useEffect(() => {
-        if (!connected) return;
+        if (!connected) {
+            return subscription ? clearSubscription() : undefined;
+        }
 
         if (!subscription) {
             setSubscription(addHallSubscriber(onReceiveMessage));
@@ -94,7 +101,7 @@ const HallContextProvider = ({ children }) => {
 
     useEffect(() => getAvailableRooms(), []);
 
-    return <HallContext.Provider>{children}</HallContext.Provider>;
+    return <HallContext.Provider value={{}}>{children}</HallContext.Provider>;
 };
 
 const useHallContext = () => useContext(HallContext);
