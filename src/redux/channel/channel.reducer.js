@@ -20,7 +20,7 @@ import getMoreMessages, {
     getMoreMessagesPending,
     getMoreMessagesFulfilled,
     getMoreMessagesRejected
-} from './getMessages.action';
+} from './getMoreMessages.action';
 
 import contacts from '../../mock/contacts.mock';
 

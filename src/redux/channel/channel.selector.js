@@ -31,7 +31,12 @@ export const selectCurrentRoomId = createSelector([selectCurrentRoom], currentRo
 );
 
 export const selectCurrentRoomMessages = createSelector([selectCurrentRoom], currentRoom =>
-    currentRoom ? currentRoom.messages : null
+    currentRoom ? currentRoom.messages : []
+);
+
+export const selectCurrentLoadedMessagesLength = createSelector(
+    [selectCurrentRoomMessages],
+    messages => messages.length
 );
 
 export const selectCurrentRoomQuantityOfMessages = createSelector(

@@ -24,10 +24,17 @@ function Chat() {
             fixedWidth: true
         })
     );
-    const listRef = useRef(null);
 
-    const { messages, quantityOfMessages, numberOfRows, loadMoreRows, isRowLoaded } =
-        useChatContext();
+    const {
+        messages,
+        quantityOfMessages,
+        numberOfRows,
+        listRef,
+        loadMoreRows,
+        isRowLoaded,
+        onListScroll,
+        size
+    } = useChatContext();
 
     const userToken = useSelector(selectUserToken);
 
@@ -45,8 +52,8 @@ function Chat() {
                 isRowLoaded={isRowLoaded}
                 loadMoreRows={loadMoreRows}
                 rowCount={quantityOfMessages}
-                minimumBatchSize={10}
-                threshold={10}
+                minimumBatchSize={size}
+                threshold={size}
             >
                 {({ onRowsRendered, registerChild }) => {
                     registerChild(listRef);
@@ -61,6 +68,8 @@ function Chat() {
                                     rowHeight={cache.current.rowHeight}
                                     deferredMeasurementCache={cache.current}
                                     style={{ padding: `0px ${theme.spacing(2)}` }}
+                                    scrollToAlignment="end"
+                                    onScroll={onListScroll}
                                     rowRenderer={({ index, parent, key, style }) =>
                                         messages[index] ? (
                                             <CellMeasurer

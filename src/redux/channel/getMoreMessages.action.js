@@ -9,7 +9,7 @@ import HttpService from '../../services/HttpService';
 
 const getMoreMessages = createAsyncThunk(
     'channel/getMoreMessages',
-    async ({ page, size = 10, onSuccess }, { rejectWithValue, getState }) => {
+    async ({ page, size, onSuccess }, { rejectWithValue, getState }) => {
         const http = new HttpService();
         const roomId = selectCurrentRoomId(getState());
 
@@ -24,7 +24,7 @@ const getMoreMessages = createAsyncThunk(
 
             const payload = roomAdapter.getMoreMessages(messages);
 
-            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
+            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload.reverse());
 
             return payload;
         } catch (err) {
@@ -39,14 +39,20 @@ export const getMoreMessagesPending = state => ({
     error: null
 });
 
-export const getMoreMessagesFulfilled = (state, action) => ({
-    ...state,
-    loading: false,
-    currentRoom: {
-        ...state.currentRoom,
-        messages: [...action.payload, ...state.currentRoom.messages]
-    }
-});
+export const getMoreMessagesFulfilled = (state, action) => {
+    const messages = [...action.payload];
+    if (state.currentRoom && state.currentRoom.messages)
+        messages.push(...state.currentRoom.messages);
+
+    return {
+        ...state,
+        loading: false,
+        currentRoom: {
+            ...state.currentRoom,
+            messages
+        }
+    };
+};
 
 export const getMoreMessagesRejected = (state, action) => ({
     ...state,
