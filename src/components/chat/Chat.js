@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import {
     InfiniteLoader,
     List,
@@ -11,8 +10,6 @@ import {
 import Message from '../message/Message';
 
 import { withChatContext, useChatContext } from '../../context/ChatContext';
-
-import { selectUserToken } from '../../redux/user/userSlice.reducer';
 
 import { ChatWrapper } from './styled.chat';
 import { useTheme } from 'styled-components';
@@ -35,8 +32,6 @@ function Chat() {
         onListScroll,
         size
     } = useChatContext();
-
-    const userToken = useSelector(selectUserToken);
 
     useEffect(() => {
         const { current } = listRef;
@@ -79,20 +74,9 @@ function Chat() {
                                                 key={key}
                                                 rowIndex={index}
                                             >
-                                                <Message
-                                                    justify={
-                                                        messages[index].userToken === userToken
-                                                            ? 'end'
-                                                            : 'start'
-                                                    }
-                                                    style={style}
-                                                    text={messages[index].text}
-                                                    date={messages[index].date}
-                                                />
+                                                <Message message={messages[index]} style={style} />
                                             </CellMeasurer>
-                                        ) : (
-                                            <span>This message does not have been loaded yet!</span>
-                                        )
+                                        ) : null
                                     }
                                     height={height}
                                     width={width}

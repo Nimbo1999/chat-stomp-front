@@ -1,25 +1,37 @@
 import React from 'react';
-import { Row, Col, Card, List } from 'antd';
+import { useSelector } from 'react-redux';
+import { Row, Col, List } from 'antd';
+import { ClockCircleFilled, CheckOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-import { Text, JustifyContent, CardMessage } from './styled.message';
+import { selectUser } from '../../redux/user/userSlice.reducer';
 
-const { Meta } = Card;
+import { MESSAGE_STATUS } from '../../constants/messageStatus';
 
-const Message = ({ justify = 'start', text, date, style }) => {
+import { Text, JustifyContent, CardMessage, MetaWrapper } from './styled.message';
+
+const Message = ({ message, style }) => {
+    const userToken = useSelector(selectUser);
+
+    const justify = message && message.userToken === userToken ? 'end' : 'start';
+
     const formatDate = () => {
+        if (!message) return '';
+
         const today = dayjs().format('YYYY-MM-DD');
-        const getMessageDateWithoutTime = dayjs(date).format('YYYY-MM-DD');
+        const getMessageDateWithoutTime = dayjs(message.date).format('YYYY-MM-DD');
 
         if (dayjs(today).isSame(dayjs(getMessageDateWithoutTime))) {
-            return dayjs(date).format('[Hoje às] HH:mm');
+            return dayjs(message.date).format('[Hoje às] HH:mm');
         }
 
-        return dayjs(date).format('DD/MM/YYYY [às] HH-mm');
+        return dayjs(message.date).format('DD/MM/YYYY [às] HH-mm');
     };
 
     const formatText = () => {
-        const messageArray = String(text).split('\n');
+        if (!message) return '';
+
+        const messageArray = String(message.text).split('\n');
 
         return messageArray.length > 1 ? (
             renderTextWithLineBreak(messageArray)
@@ -40,6 +52,13 @@ const Message = ({ justify = 'start', text, date, style }) => {
             )
         );
 
+    const renderIcon = () =>
+        message && message.status === MESSAGE_STATUS.NOT_SENDED ? (
+            <ClockCircleFilled />
+        ) : (
+            <CheckOutlined />
+        );
+
     return (
         <List.Item style={style}>
             <Row justify={justify} style={{ width: '100%' }}>
@@ -48,10 +67,19 @@ const Message = ({ justify = 'start', text, date, style }) => {
                         <CardMessage isRecipient={justify === 'start'}>
                             <Text>{formatText()}</Text>
 
-                            <Meta
-                                description={formatDate()}
-                                style={{ textAlign: justify, fontSize: '.75rem' }}
-                            />
+                            <MetaWrapper justify={justify}>
+                                {justify === 'start' ? (
+                                    <>
+                                        {renderIcon()}
+                                        <span>{formatDate()}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>{formatDate()}</span>
+                                        {renderIcon()}
+                                    </>
+                                )}
+                            </MetaWrapper>
                         </CardMessage>
                     </JustifyContent>
                 </Col>

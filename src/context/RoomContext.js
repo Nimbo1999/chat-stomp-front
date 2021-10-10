@@ -106,7 +106,7 @@ const RoomContextProvider = ({ children }) => {
             roomId: currentRoomId,
             content: textMessage,
             timestamp: new Date().getTime(),
-            userToken // messageOwnerToken: userToken
+            messageOwnerToken: userToken
         };
 
         send(message, transaction);

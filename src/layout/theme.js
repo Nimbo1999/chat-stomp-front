@@ -1,8 +1,10 @@
 const theme = {
     pallet: {
         white: '#FFFFFF',
+        light: '#DCDBDB',
         strongGrey: '#606060',
         grey: '#BDBDBD',
+        grey2: '#828282',
         blue: '#2D9CDB',
         lightBlue: '#D2EFF9',
         shineBlue: '#6D9FBB',

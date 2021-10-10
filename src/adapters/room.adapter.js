@@ -31,6 +31,7 @@ const roomAdapter = {
             ? messages.map(message => ({
                   id: message.id,
                   userToken: message.userToken,
+                  currentStatus: message.currentStatus,
                   text: message.content,
                   date: message.timestamp
               }))
