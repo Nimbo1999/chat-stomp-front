@@ -1,5 +1,9 @@
 import { API_CONSTANTS } from '../constants/api.constants';
 
+import InternalServerError from '../exceptions/InternalServerError';
+import BadRequestError from '../exceptions/BadRequestError';
+import handleHttpRequestErrors from '../exceptions/HandleHttpRequestErrors';
+
 class HttpService {
     constructor() {
         this.baseUrl = API_CONSTANTS.BASE_URL;
@@ -13,6 +17,7 @@ class HttpService {
         })
             .then(this.checkResponse)
             .catch(err => {
+                handleHttpRequestErrors(err);
                 throw err;
             });
 
@@ -26,6 +31,7 @@ class HttpService {
         })
             .then(this.checkResponse)
             .catch(err => {
+                handleHttpRequestErrors(err);
                 throw err;
             });
 
@@ -33,7 +39,14 @@ class HttpService {
     }
 
     checkResponse(response) {
-        if (response.status === 500) throw new Error('Internal Server Error');
+        if (response.status === 400)
+            throw new BadRequestError(
+                'Não foi possível acessar esse recurso, tente novamente mais tarde. Bad Request'
+            );
+        if (response.status === 500)
+            throw new InternalServerError(
+                'Não foi possível acessar esse recurso, tente novamente mais tarde. Internal Server Error'
+            );
 
         if (response.headers.get('Content-Type') === 'application/json') return response.json();
 
