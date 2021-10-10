@@ -18,12 +18,12 @@ const createRoom = createAsyncThunk(
 
             const bodyPayload = roomAdapter.createRoom(currentUser, targetUser);
 
-            const { token } = await http.post(
+            const { id } = await http.post(
                 bodyPayload,
                 `${API_CONSTANTS.ROOM.ROOMS}${API_CONSTANTS.ROOM.OPEN}`
             );
 
-            const responsePayload = { ...bodyPayload, token, badge: 0 };
+            const responsePayload = { ...bodyPayload, id, badge: 0 };
 
             if (onSuccess) onSuccess(responsePayload);
 
@@ -45,8 +45,8 @@ export const createRoomFulfilled = (state, action) => ({
     loading: false,
     availableRooms: [...state.availableRooms, action.payload],
     isShowingNewRoomSection: false,
-    selectedRoomUser: { token: '' },
-    currentRoom: { token: action.payload.token }
+    selectedRoomUser: { id: '' },
+    currentRoom: { id: action.payload.id }
 });
 
 export const createRoomRejected = (state, action) => ({

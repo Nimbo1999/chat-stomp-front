@@ -11,7 +11,7 @@ const roomAdapter = {
     }),
 
     getRoom: ({ room, messages }) => ({
-        token: room.token,
+        id: room.id,
         startedOn: room.startedOn,
         closedOn: room.closedOn,
         messages:
@@ -33,14 +33,13 @@ const roomAdapter = {
         }
     }),
 
-    getUserAvailablesRooms: rooms => {
-        return rooms.map(({ token, recipient, sender }) => ({
-            token,
+    getUserAvailablesRooms: rooms =>
+        rooms.map(({ id, recipient, sender }) => ({
+            id,
             recipient,
             sender,
             badge: 0
-        }));
-    }
+        }))
 };
 
 export default roomAdapter;

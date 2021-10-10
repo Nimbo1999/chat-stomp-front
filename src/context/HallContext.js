@@ -31,10 +31,14 @@ const HallContextProvider = ({ children }) => {
 
     const [subscription, setSubscription] = useState(null);
 
+    const getAvailableRooms = () => dispatch(getUserAvailablesRooms());
+
     const clearSubscription = () => {
         if (subscription.unsubscribe) subscription.unsubscribe();
         setSubscription(null);
     };
+
+    useEffect(() => getAvailableRooms(), []);
 
     useEffect(() => {
         if (!connected) {
@@ -106,10 +110,6 @@ const HallContextProvider = ({ children }) => {
 
     const hasOpenedRoomWithPayloadToken = payload =>
         availableRooms.some(({ token }) => token === payload.token);
-
-    const getAvailableRooms = () => dispatch(getUserAvailablesRooms());
-
-    useEffect(() => getAvailableRooms(), []);
 
     return <HallContext.Provider value={{}}>{children}</HallContext.Provider>;
 };
