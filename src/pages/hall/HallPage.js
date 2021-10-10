@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Switch, useHistory } from 'react-router-dom';
-import { List, Avatar, Typography, Button, Row, Col, Alert, Badge, message } from 'antd';
+import { List, Avatar, Typography, Button, Row, Col, Alert, Badge } from 'antd';
 import { MessageTwoTone } from '@ant-design/icons';
 import { useTheme } from 'styled-components';
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Alert } from 'antd';
 
 import { Container } from './styled.network';
@@ -6,8 +6,6 @@ import { useStompClientContext } from '../../context/StompClientContext';
 
 const NetworkOfflineAlert = () => {
     const { connected } = useStompClientContext();
-
-    useEffect(() => console.log(connected), [connected]);
 
     return !connected ? (
         <Container>
