@@ -14,7 +14,8 @@ const getRoom = createAsyncThunk(
             const url =
                 API_CONSTANTS.ROOM.ROOMS +
                 API_CONSTANTS.URL_PARAM(roomId) +
-                API_CONSTANTS.ROOM.CONTENT;
+                API_CONSTANTS.ROOM.CONTENT +
+                API_CONSTANTS.URL_QUERY_STRING({ page: 0, size: 10 });
 
             const room = await http.get(url);
 

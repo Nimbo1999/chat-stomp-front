@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import {
@@ -95,13 +96,17 @@ const RoomContextProvider = ({ children }) => {
         event.preventDefault();
         const transaction = begin();
 
-        if (!textMessage) setError('Esse campo é obrigatório!');
+        if (!textMessage) {
+            transaction.abort();
+            return setError('Esse campo é obrigatório!');
+        }
 
         const message = {
-            roomToken: currentRoomToken,
+            id: uuidv4(),
+            roomId: currentRoomToken,
             content: textMessage,
-            type: 'TEXT',
-            userToken
+            timestamp: new Date().getTime(),
+            messageOwnerToken: userToken
         };
 
         send(message, transaction);
