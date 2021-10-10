@@ -19,6 +19,11 @@ export const selectAvailableRooms = createSelector(
     channel => channel.availableRooms
 );
 
+export const selectAvailableRoomsLength = createSelector(
+    [selectAvailableRooms],
+    availableRooms => availableRooms.length
+);
+
 export const selectCurrentRoom = createSelector([selectChannel], channel => channel.currentRoom);
 
 export const selectCurrentRoomToken = createSelector([selectCurrentRoom], currentRoom =>

@@ -1,16 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import {
     selectCurrentRoomToken,
     selectCurrentRoomRecipientToken
 } from '../redux/channel/channel.selector';
-import { insertMessage } from '../redux/channel/channel.reducer';
+import { insertMessage, setCurrentRoom } from '../redux/channel/channel.reducer';
 
 import { useStompClientContext } from './StompClientContext';
 
 import MessagesService from '../services/Messages';
+
+import audio from '../audios/new-message-room.mp3';
 
 const RoomContext = createContext({});
 
@@ -18,22 +22,35 @@ const messagesService = new MessagesService();
 
 const RoomContextProvider = ({ children }) => {
     const dispatch = useDispatch();
+    const history = useHistory();
 
-    const { send, addRoomSubscriber, begin } = useStompClientContext();
+    const { send, addRoomSubscriber, begin, connected } = useStompClientContext();
 
     const userToken = useSelector(selectUserToken);
     const currentRoomToken = useSelector(selectCurrentRoomToken);
     const currentRoomRecipientToken = useSelector(selectCurrentRoomRecipientToken);
+    const audioRef = useRef(new Audio(audio));
 
     const [subscription, setSubscription] = useState(null);
 
     const [textMessage, setTextMessage] = useState('');
     const [error, setError] = useState('');
 
+    const unSubscribeToRoom = () => {
+        subscription.unsubscribe();
+        setSubscription(null);
+    };
+
     useEffect(() => {
+        if (!connected && subscription && subscription.unsubscribe) {
+            unSubscribeToRoom();
+            dispatch(setCurrentRoom(null));
+            return history.goBack();
+        }
+
         if (!currentRoomToken || !currentRoomRecipientToken) return;
 
-        if (!subscription) {
+        if (connected && !subscription) {
             return setSubscription(
                 addRoomSubscriber(currentRoomRecipientToken, currentRoomToken, onReceiveMessage)
             );
@@ -41,12 +58,10 @@ const RoomContextProvider = ({ children }) => {
 
         return () => {
             if (subscription && subscription.unsubscribe) {
-                subscription.unsubscribe();
-
-                setSubscription(null);
+                unSubscribeToRoom();
             }
         };
-    }, [subscription, currentRoomToken]);
+    }, [subscription, currentRoomToken, connected]);
 
     const onReceiveMessage = stompMessage => {
         const { body, ack, nack } = stompMessage;
@@ -65,12 +80,13 @@ const RoomContextProvider = ({ children }) => {
                 token: payload.messageToken,
                 userToken: data.userToken
             });
+            audioRef.current.play();
 
             if (data.userToken !== userToken) {
-                ack();
+                ack({ receipt: payload.messageToken });
             }
         } catch (err) {
-            nack();
+            nack({ receipt: payload.messageToken });
         }
     };
 
@@ -80,13 +96,17 @@ const RoomContextProvider = ({ children }) => {
         event.preventDefault();
         const transaction = begin();
 
-        if (!textMessage) setError('Esse campo é obrigatório!');
+        if (!textMessage) {
+            transaction.abort();
+            return setError('Esse campo é obrigatório!');
+        }
 
         const message = {
-            roomToken: currentRoomToken,
+            id: uuidv4(),
+            roomId: currentRoomToken,
             content: textMessage,
-            type: 'TEXT',
-            userToken
+            timestamp: new Date().getTime(),
+            messageOwnerToken: userToken
         };
 
         send(message, transaction);

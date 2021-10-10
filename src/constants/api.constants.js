@@ -31,5 +31,12 @@ export const API_CONSTANTS = {
         CHAT: '/chat'
     },
 
-    URL_PARAM: param => `/${param}`
+    URL_PARAM: param => `/${param}`,
+
+    URL_QUERY_STRING: params =>
+        Object.keys(params)
+            .map((key, index) =>
+                index === 0 ? `?${key}=${params[key]}` : `&${key}=${params[key]}`
+            )
+            .join('')
 };
