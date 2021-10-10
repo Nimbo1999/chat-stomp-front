@@ -72,21 +72,21 @@ const RoomContextProvider = ({ children }) => {
 
     const incomingMessageHandler = async (payload, ack, nack) => {
         try {
-            const data = await messagesService.getMessage(payload.messageToken);
+            const data = await messagesService.getMessage(payload.messageId);
 
             includeMessageInChat({
                 text: data.content,
                 date: data.timestamp,
-                token: payload.messageToken,
+                token: payload.messageId,
                 userToken: data.userToken
             });
             audioRef.current.play();
 
             if (data.userToken !== userToken) {
-                ack({ receipt: payload.messageToken });
+                ack({ receipt: payload.messageId });
             }
         } catch (err) {
-            nack({ receipt: payload.messageToken });
+            nack({ receipt: payload.messageId });
         }
     };
 
