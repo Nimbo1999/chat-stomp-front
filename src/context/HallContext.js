@@ -14,7 +14,7 @@ import { selectUserToken } from '../redux/user/userSlice.reducer';
 
 import { useStompClientContext } from './StompClientContext';
 
-import audio from '../audios/new-message-hall.mp3';
+import audio from '../assets/audios/new-message-hall.mp3';
 
 const HallContext = createContext({});
 

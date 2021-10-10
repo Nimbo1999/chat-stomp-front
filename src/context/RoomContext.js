@@ -14,7 +14,7 @@ import { useStompClientContext } from './StompClientContext';
 
 import MessagesService from '../services/Messages';
 
-import audio from '../audios/new-message-room.mp3';
+import audio from '../assets/audios/new-message-room.mp3';
 
 const RoomContext = createContext({});
 

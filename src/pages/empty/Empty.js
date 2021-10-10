@@ -1,12 +1,11 @@
 import React from 'react';
-import { Empty } from 'antd';
 
-import EmptyWrapper from './styled.empty';
+import { EmptyWrapper, SVGImage } from './styled.empty';
 
 function EmptyPage() {
     return (
         <EmptyWrapper>
-            <Empty />
+            <SVGImage />
         </EmptyWrapper>
     );
 }
