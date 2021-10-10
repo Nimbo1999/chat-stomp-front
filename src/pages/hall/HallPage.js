@@ -47,11 +47,11 @@ function HallPage() {
     const currentRoom = useSelector(selectCurrentRoom);
     const user = useSelector(selectUser);
 
-    function onSelectRoom(token) {
+    function onSelectRoom(id) {
         try {
             verifyIfHasConnection();
-            dispatch(removeBadges(token));
-            history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(token));
+            dispatch(removeBadges(id));
+            history.push(ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.URL_PARAM(id));
         } catch (e) {
             handleNetworkError(e);
         }
@@ -89,11 +89,11 @@ function HallPage() {
                         </Title>
                     }
                     dataSource={availableRooms}
-                    renderItem={({ token, sender, recipient, badge }) => (
+                    renderItem={({ id, sender, recipient, badge }) => (
                         <ItemWrapper
-                            key={token}
-                            onClick={() => onSelectRoom(token)}
-                            active={currentRoom && currentRoom.token === token}
+                            key={id}
+                            onClick={() => onSelectRoom(id)}
+                            active={currentRoom && currentRoom.id === id}
                         >
                             <div className="main-content">
                                 <Avatar
@@ -154,7 +154,7 @@ function HallPage() {
 
             <Switch>
                 <AppRoute
-                    path={ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.TOKEN_PARAM}
+                    path={ROUTES_CONSTANTS.ROOM + ROUTES_CONSTANTS.ID_PARAM}
                     component={RoomPage}
                 />
 

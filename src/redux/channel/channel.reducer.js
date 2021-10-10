@@ -24,7 +24,7 @@ const initialState = {
     currentRoom: null,
     isShowingNewRoomSection: false,
     selectedRoomUser: {
-        token: ''
+        id: ''
     },
     loading: false,
     error: null
@@ -60,7 +60,7 @@ const channelSlice = createSlice({
         }),
         respondToCloseRoom: state => {
             const newAvailableRooms = [
-                ...state.availableRooms.filter(room => room !== state.currentRoom.token)
+                ...state.availableRooms.filter(room => room !== state.currentRoom.id)
             ];
 
             return {
@@ -91,7 +91,7 @@ const channelSlice = createSlice({
             const currentAvailableRooms = [...state.availableRooms];
 
             const newAvailableRooms = currentAvailableRooms.map(room => {
-                if (room.token === action.payload) {
+                if (room.id === action.payload) {
                     return {
                         ...room,
                         badge: room.badge + 1
@@ -110,7 +110,7 @@ const channelSlice = createSlice({
             const currentAvailableRooms = [...state.availableRooms];
 
             const newAvailableRooms = currentAvailableRooms.map(room => {
-                if (room.token === action.payload) {
+                if (room.id === action.payload) {
                     return {
                         ...room,
                         badge: 0

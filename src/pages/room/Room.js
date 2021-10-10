@@ -19,7 +19,7 @@ import CommentaryInput from '../../components/commentary/CommentaryInput';
 import { RoomContent, LoadingRoomWrapper, PageHeader, Title } from './styled.room';
 
 const RoomPage = () => {
-    const { token } = useParams();
+    const { id } = useParams();
     const history = useHistory();
     const dispatch = useDispatch();
 
@@ -27,9 +27,10 @@ const RoomPage = () => {
     const userToken = useSelector(selectUserToken);
     const loading = useSelector(isLoading);
 
-    useEffect(() => {
-        dispatch(getRoomAction({ roomToken: token, onSuccess: onGetRoomSuccess }));
-    }, [token, dispatch]);
+    useEffect(
+        () => dispatch(getRoomAction({ roomId: id, onSuccess: onGetRoomSuccess })),
+        [id, dispatch]
+    );
 
     const onGetRoomSuccess = room => dispatch(setCurrentRoom(room));
 

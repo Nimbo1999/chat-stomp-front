@@ -11,7 +11,7 @@ const roomAdapter = {
     }),
 
     getRoom: ({ room, messages }) => ({
-        token: room.token,
+        id: room.id,
         startedOn: room.startedOn,
         closedOn: room.closedOn,
         messages:

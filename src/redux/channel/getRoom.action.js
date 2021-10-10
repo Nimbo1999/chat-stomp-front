@@ -7,13 +7,13 @@ import HttpService from '../../services/HttpService';
 
 const getRoom = createAsyncThunk(
     'channel/getRoom',
-    async ({ roomToken, onSuccess }, { rejectWithValue }) => {
+    async ({ roomId, onSuccess }, { rejectWithValue }) => {
         const http = new HttpService();
 
         try {
             const url =
                 API_CONSTANTS.ROOM.ROOMS +
-                API_CONSTANTS.URL_PARAM(roomToken) +
+                API_CONSTANTS.URL_PARAM(roomId) +
                 API_CONSTANTS.ROOM.CONTENT;
 
             const room = await http.get(url);

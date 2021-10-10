@@ -33,25 +33,22 @@ function CreateRoomCard() {
 
     const onSelectNewRecipient = token => {
         const selectedUser = contacts.find(item => item.token === token);
-
         dispatch(setSelectedRoomUser(selectedUser));
     };
 
     const onCancel = () =>
         batch(() => {
             dispatch(setShowNewRoomSection(false));
-
-            dispatch(setSelectedRoomUser({ token: '' }));
+            dispatch(setSelectedRoomUser({ id: '' }));
         });
 
     const onCreateNewRoom = () => {
         try {
             verifyIfHasConnection();
             dispatch(
-                createNewRoomAction(({ token }) => {
+                createNewRoomAction(({ id }) => {
                     message.success('Sala criada com sucesso!');
-
-                    history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(token)}`);
+                    history.push(`${ROUTES_CONSTANTS.ROOM}${ROUTES_CONSTANTS.URL_PARAM(id)}`);
                 })
             );
         } catch (e) {
