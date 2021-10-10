@@ -29,7 +29,7 @@ const roomAdapter = {
     getMoreMessages: ({ messages }) =>
         messages && messages.length
             ? messages.map(message => ({
-                  token: message.token,
+                  id: message.id,
                   userToken: message.userToken,
                   text: message.content,
                   date: message.timestamp

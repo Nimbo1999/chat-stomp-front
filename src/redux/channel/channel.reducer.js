@@ -76,11 +76,14 @@ const channelSlice = createSlice({
         },
         insertMessage: (state, action) => {
             if (state.currentRoom && state.currentRoom.messages) {
+                const newArrayOfMessages = [...state.currentRoom.messages, action.payload];
+
                 return {
                     ...state,
                     currentRoom: {
                         ...state.currentRoom,
-                        messages: [...state.currentRoom.messages, action.payload]
+                        messages: newArrayOfMessages,
+                        quantityOfMessages: newArrayOfMessages.length
                     }
                 };
             }
@@ -89,7 +92,8 @@ const channelSlice = createSlice({
                 ...state,
                 currentRoom: {
                     ...state.currentRoom,
-                    messages: [action.payload]
+                    messages: [action.payload],
+                    quantityOfMessages: 1
                 }
             };
         },
