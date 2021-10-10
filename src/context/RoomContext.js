@@ -8,7 +8,12 @@ import {
     selectCurrentRoomId,
     selectCurrentRoomRecipientToken
 } from '../redux/channel/channel.selector';
-import { insertMessage, setCurrentRoom } from '../redux/channel/channel.reducer';
+import {
+    insertMessage,
+    setCurrentRoom,
+    insertMessageFromInput,
+    updateMessage
+} from '../redux/channel/channel.reducer';
 
 import { useStompClientContext } from './StompClientContext';
 
@@ -74,23 +79,27 @@ const RoomContextProvider = ({ children }) => {
         try {
             const data = await messagesService.getMessage(payload.messageId);
 
+            if (data.userToken === userToken) {
+                audioRef.current.play();
+                return updateChatMessage(payload.messageId);
+            }
+
+            audioRef.current.play();
             includeMessageInChat({
                 text: data.content,
                 date: data.timestamp,
                 token: payload.messageId,
                 userToken: data.userToken
             });
-            audioRef.current.play();
 
-            if (data.userToken !== userToken) {
-                ack({ receipt: payload.messageId });
-            }
+            ack({ receipt: payload.messageId });
         } catch (err) {
             nack({ receipt: payload.messageId });
         }
     };
 
     const includeMessageInChat = payload => dispatch(insertMessage(payload));
+    const updateChatMessage = payload => dispatch(updateMessage(payload));
 
     const onSubmitMessage = event => {
         event.preventDefault();
@@ -109,6 +118,7 @@ const RoomContextProvider = ({ children }) => {
             messageOwnerToken: userToken
         };
 
+        dispatch(insertMessageFromInput(message));
         send(message, transaction);
         setTextMessage('');
         transaction.commit();

@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Row, Col, List } from 'antd';
 import { ClockCircleFilled, CheckOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-import { selectUser } from '../../redux/user/userSlice.reducer';
+import { selectUserToken } from '../../redux/user/userSlice.reducer';
 
 import { MESSAGE_STATUS } from '../../constants/messageStatus';
 
 import { Text, JustifyContent, CardMessage, MetaWrapper } from './styled.message';
 
 const Message = ({ message, style }) => {
-    const userToken = useSelector(selectUser);
+    const userToken = useSelector(selectUserToken);
 
-    const justify = message && message.userToken === userToken ? 'end' : 'start';
+    const justify = useMemo(
+        () => (message && message.userToken === userToken ? 'end' : 'start'),
+        [userToken]
+    );
 
     const formatDate = () => {
         if (!message) return '';
@@ -53,7 +56,7 @@ const Message = ({ message, style }) => {
         );
 
     const renderIcon = () =>
-        message && message.status === MESSAGE_STATUS.NOT_SENDED ? (
+        message && message.currentStatus === MESSAGE_STATUS.NOT_SENDED ? (
             <ClockCircleFilled />
         ) : (
             <CheckOutlined />

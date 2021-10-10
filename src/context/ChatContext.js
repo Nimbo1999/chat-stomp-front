@@ -20,7 +20,7 @@ const ChatContextProvider = ({ children }) => {
     const quantityOfMessages = useSelector(selectCurrentRoomQuantityOfMessages);
 
     const [page, setPage] = useState(0);
-    const [size] = useState(15);
+    const [size] = useState(100000);
     const [hasNextPage, setHasNextPage] = useState(false);
     const [lockScrollPosition, setLockScrollPosition] = useState(false);
     const [currentScrollTopValue, setCurrentScrollTopValue] = useState(null);
@@ -31,7 +31,7 @@ const ChatContextProvider = ({ children }) => {
         rowIndex => {
             const { current } = listRef;
             if (current && !lockScrollPosition) {
-                current.scrollToRow(rowIndex);
+                current.scrollToPosition(999999999999);
                 setLockScrollPosition(false);
             }
         },

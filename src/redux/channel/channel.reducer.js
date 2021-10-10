@@ -23,6 +23,8 @@ import getMoreMessages, {
 } from './getMoreMessages.action';
 
 import contacts from '../../mock/contacts.mock';
+import messageAdapter from '../../adapters/message.adapter';
+import { MESSAGE_STATUS } from '../../constants/messageStatus';
 
 const initialState = {
     contacts,
@@ -72,6 +74,25 @@ const channelSlice = createSlice({
             return {
                 ...state,
                 availableRooms: newAvailableRooms
+            };
+        },
+        updateMessage: (state, action) => {
+            if (!state.currentRoom) return state;
+
+            const messages = [...state.currentRoom.messages];
+            const indexOfMessage = messages.findIndex(msg => msg.id === action.payload);
+            messages[indexOfMessage] = {
+                ...messages[indexOfMessage],
+                currentStatus: MESSAGE_STATUS.SENDED
+            };
+
+            return {
+                ...state,
+                currentRoom: {
+                    ...state.currentRoom,
+                    messages,
+                    quantityOfMessages: messages.length
+                }
             };
         },
         insertMessage: (state, action) => {
@@ -134,6 +155,20 @@ const channelSlice = createSlice({
                 ...state,
                 availableRooms: newAvailableRooms
             };
+        },
+        insertMessageFromInput: (state, action) => {
+            if (state.currentRoom && state.currentRoom.messages) {
+                const message = messageAdapter.inputToMessages(action.payload);
+
+                return {
+                    ...state,
+                    currentRoom: {
+                        ...state.currentRoom,
+                        messages: [...state.currentRoom.messages, message],
+                        quantityOfMessages: state.currentRoom.messages.length + 1
+                    }
+                };
+            }
         }
     },
     extraReducers: builder => {
@@ -163,10 +198,12 @@ export const {
     closeError,
     setCurrentRoom,
     respondToCloseRoom,
+    updateMessage,
     insertMessage,
     newMessageOnRoom,
     removeBadges,
-    pushToAvailableRooms
+    pushToAvailableRooms,
+    insertMessageFromInput
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

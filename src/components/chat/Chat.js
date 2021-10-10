@@ -63,7 +63,7 @@ function Chat() {
                                     rowHeight={cache.current.rowHeight}
                                     deferredMeasurementCache={cache.current}
                                     style={{ padding: `0px ${theme.spacing(2)}` }}
-                                    scrollToAlignment="end"
+                                    scrollToAlignment="start"
                                     onScroll={onListScroll}
                                     rowRenderer={({ index, parent, key, style }) =>
                                         messages[index] ? (
