@@ -8,7 +8,7 @@ export const API_CONSTANTS = {
 
         CLOSE: '/close',
 
-        CONTENT: '/content',
+        MESSEGES: '/messages',
 
         USERS: '/users'
     },

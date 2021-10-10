@@ -26,7 +26,8 @@ function Chat() {
     );
     const listRef = useRef(null);
 
-    const { messages, numberOfRows, loadMoreRows, isRowLoaded } = useChatContext();
+    const { messages, quantityOfMessages, numberOfRows, loadMoreRows, isRowLoaded } =
+        useChatContext();
 
     const userToken = useSelector(selectUserToken);
 
@@ -43,11 +44,7 @@ function Chat() {
             <InfiniteLoader
                 isRowLoaded={isRowLoaded}
                 loadMoreRows={loadMoreRows}
-                /**
-                 * @todo Precisamos da informação de quantas mensagens a lista possui. coloquei o valor de 1000
-                 * enquanto não possuo essa informação.
-                 * */
-                rowCount={1000}
+                rowCount={quantityOfMessages}
                 minimumBatchSize={10}
                 threshold={10}
             >
@@ -85,7 +82,7 @@ function Chat() {
                                                 />
                                             </CellMeasurer>
                                         ) : (
-                                            <span>No Row!!!</span>
+                                            <span>This message does not have been loaded yet!</span>
                                         )
                                     }
                                     height={height}

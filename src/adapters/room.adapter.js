@@ -10,11 +10,12 @@ const roomAdapter = {
         }
     }),
 
-    getRoom: ({ room }) => ({
+    getRoom: ({ room, quantityOfMessages }) => ({
         id: room.id,
         startedOn: room.startedOn,
         closedOn: room.closedOn,
         messages: [],
+        quantityOfMessages,
         recipient: {
             token: room.recipient.token,
             name: room.recipient.name
@@ -24,6 +25,16 @@ const roomAdapter = {
             name: room.sender.name
         }
     }),
+
+    getMoreMessages: ({ messages }) =>
+        messages && messages.length
+            ? messages.map(message => ({
+                  token: message.token,
+                  userToken: message.userToken,
+                  text: message.content,
+                  date: message.timestamp
+              }))
+            : [],
 
     getUserAvailablesRooms: rooms =>
         rooms.map(({ id, recipient, sender }) => ({

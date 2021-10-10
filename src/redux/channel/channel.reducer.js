@@ -16,6 +16,12 @@ import getUserAvailablesRooms, {
     getUserAvailablesRoomsFulfilled,
     getUserAvailablesRoomsRejected
 } from './getUserAvailablesRooms.action';
+import getMoreMessages, {
+    getMoreMessagesPending,
+    getMoreMessagesFulfilled,
+    getMoreMessagesRejected
+} from './getMessages.action';
+
 import contacts from '../../mock/contacts.mock';
 
 const initialState = {
@@ -53,13 +59,6 @@ const channelSlice = createSlice({
         setCurrentRoom: (state, action) => ({
             ...state,
             currentRoom: action.payload
-        }),
-        getMoreMessages: (state, action) => ({
-            ...state,
-            currentRoom: {
-                ...state.currentRoom,
-                messages: [...action.payload, ...state.currentRoom]
-            }
         }),
         pushToAvailableRooms: (state, action) => ({
             ...state,
@@ -146,7 +145,10 @@ const channelSlice = createSlice({
             .addCase(closeRoom.rejected, closeRoomRejected)
             .addCase(getUserAvailablesRooms.pending, getUserAvailablesRoomsPending)
             .addCase(getUserAvailablesRooms.fulfilled, getUserAvailablesRoomsFulfilled)
-            .addCase(getUserAvailablesRooms.rejected, getUserAvailablesRoomsRejected);
+            .addCase(getUserAvailablesRooms.rejected, getUserAvailablesRoomsRejected)
+            .addCase(getMoreMessages.pending, getMoreMessagesPending)
+            .addCase(getMoreMessages.fulfilled, getMoreMessagesFulfilled)
+            .addCase(getMoreMessages.rejected, getMoreMessagesRejected);
     }
 });
 
@@ -160,8 +162,7 @@ export const {
     insertMessage,
     newMessageOnRoom,
     removeBadges,
-    pushToAvailableRooms,
-    getMoreMessages
+    pushToAvailableRooms
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

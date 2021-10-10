@@ -66,7 +66,6 @@ const HallContextProvider = ({ children }) => {
     };
 
     const incomingMessageHandler = payload => {
-        console.log({ payload, line: '69 , HallContext' });
         if (!payload.id || currentRoomId === payload.id) {
             return;
         }
@@ -76,7 +75,7 @@ const HallContextProvider = ({ children }) => {
         showMessageToasty(sender, recipient);
 
         if (hasOpenedRoomWithPayloadToken(payload)) {
-            return dispatch(newMessageOnRoom(payload.token));
+            return dispatch(newMessageOnRoom(payload.id));
         }
 
         try {

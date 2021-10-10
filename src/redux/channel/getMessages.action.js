@@ -3,14 +3,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API_CONSTANTS } from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
-import { getMoreMessages } from './channel.reducer';
 import { selectCurrentRoomId } from './channel.selector';
 
 import HttpService from '../../services/HttpService';
 
-const getMessages = createAsyncThunk(
-    'channel/getMessages',
-    async ({ page, size }, { rejectWithValue, dispatch, getState }) => {
+const getMoreMessages = createAsyncThunk(
+    'channel/getMoreMessages',
+    async ({ page, size = 10, onSuccess }, { rejectWithValue, getState }) => {
         const http = new HttpService();
         const roomId = selectCurrentRoomId(getState());
 
@@ -18,14 +17,14 @@ const getMessages = createAsyncThunk(
             const url =
                 API_CONSTANTS.ROOM.ROOMS +
                 API_CONSTANTS.URL_PARAM(roomId) +
-                API_CONSTANTS.ROOM.CONTENT +
+                API_CONSTANTS.ROOM.MESSEGES +
                 API_CONSTANTS.URL_QUERY_STRING({ page, size });
 
             const messages = await http.get(url);
 
-            const payload = roomAdapter.getMessages(messages);
+            const payload = roomAdapter.getMoreMessages(messages);
 
-            dispatch(getMoreMessages(payload));
+            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
 
             return payload;
         } catch (err) {
@@ -34,22 +33,25 @@ const getMessages = createAsyncThunk(
     }
 );
 
-export const getMessagesPending = state => ({
+export const getMoreMessagesPending = state => ({
     ...state,
     loading: true,
-    error: null,
-    currentRoom: null
+    error: null
 });
 
-export const getMessagesFulfilled = state => ({
+export const getMoreMessagesFulfilled = (state, action) => ({
     ...state,
-    loading: false
+    loading: false,
+    currentRoom: {
+        ...state.currentRoom,
+        messages: [...action.payload, ...state.currentRoom.messages]
+    }
 });
 
-export const getMessagesRejected = (state, action) => ({
+export const getMoreMessagesRejected = (state, action) => ({
     ...state,
     loading: false,
     error: action.payload
 });
 
-export default getMessages;
+export default getMoreMessages;
