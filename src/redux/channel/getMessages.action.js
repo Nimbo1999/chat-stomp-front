@@ -3,27 +3,29 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API_CONSTANTS } from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
-import { setCurrentRoom } from './channel.reducer';
+import { getMoreMessages } from './channel.reducer';
+import { selectCurrentRoomId } from './channel.selector';
 
 import HttpService from '../../services/HttpService';
 
-const getRoom = createAsyncThunk(
-    'channel/getRoom',
-    async ({ roomId }, { rejectWithValue, dispatch }) => {
+const getMessages = createAsyncThunk(
+    'channel/getMessages',
+    async ({ page, size }, { rejectWithValue, dispatch, getState }) => {
         const http = new HttpService();
+        const roomId = selectCurrentRoomId(getState());
 
         try {
             const url =
                 API_CONSTANTS.ROOM.ROOMS +
                 API_CONSTANTS.URL_PARAM(roomId) +
                 API_CONSTANTS.ROOM.CONTENT +
-                API_CONSTANTS.URL_QUERY_STRING({ page: 0, size: 10 });
+                API_CONSTANTS.URL_QUERY_STRING({ page, size });
 
-            const room = await http.get(url);
+            const messages = await http.get(url);
 
-            const payload = roomAdapter.getRoom(room);
+            const payload = roomAdapter.getMessages(messages);
 
-            dispatch(setCurrentRoom(payload));
+            dispatch(getMoreMessages(payload));
 
             return payload;
         } catch (err) {
@@ -32,22 +34,22 @@ const getRoom = createAsyncThunk(
     }
 );
 
-export const getRoomPending = state => ({
+export const getMessagesPending = state => ({
     ...state,
     loading: true,
     error: null,
     currentRoom: null
 });
 
-export const getRoomFulfilled = state => ({
+export const getMessagesFulfilled = state => ({
     ...state,
     loading: false
 });
 
-export const getRoomRejected = (state, action) => ({
+export const getMessagesRejected = (state, action) => ({
     ...state,
     loading: false,
     error: action.payload
 });
 
-export default getRoom;
+export default getMessages;

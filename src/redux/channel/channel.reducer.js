@@ -54,6 +54,13 @@ const channelSlice = createSlice({
             ...state,
             currentRoom: action.payload
         }),
+        getMoreMessages: (state, action) => ({
+            ...state,
+            currentRoom: {
+                ...state.currentRoom,
+                messages: [...action.payload, ...state.currentRoom]
+            }
+        }),
         pushToAvailableRooms: (state, action) => ({
             ...state,
             availableRooms: [...state.availableRooms, action.payload]
@@ -153,7 +160,8 @@ export const {
     insertMessage,
     newMessageOnRoom,
     removeBadges,
-    pushToAvailableRooms
+    pushToAvailableRooms,
+    getMoreMessages
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

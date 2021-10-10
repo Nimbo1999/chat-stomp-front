@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import {
-    selectCurrentRoomToken,
+    selectCurrentRoomId,
     selectCurrentRoomRecipientToken
 } from '../redux/channel/channel.selector';
 import { insertMessage, setCurrentRoom } from '../redux/channel/channel.reducer';
@@ -27,7 +27,7 @@ const RoomContextProvider = ({ children }) => {
     const { send, addRoomSubscriber, begin, connected } = useStompClientContext();
 
     const userToken = useSelector(selectUserToken);
-    const currentRoomToken = useSelector(selectCurrentRoomToken);
+    const currentRoomId = useSelector(selectCurrentRoomId);
     const currentRoomRecipientToken = useSelector(selectCurrentRoomRecipientToken);
     const audioRef = useRef(new Audio(audio));
 
@@ -48,11 +48,11 @@ const RoomContextProvider = ({ children }) => {
             return history.goBack();
         }
 
-        if (!currentRoomToken || !currentRoomRecipientToken) return;
+        if (!currentRoomId || !currentRoomRecipientToken) return;
 
         if (connected && !subscription) {
             return setSubscription(
-                addRoomSubscriber(currentRoomRecipientToken, currentRoomToken, onReceiveMessage)
+                addRoomSubscriber(currentRoomRecipientToken, currentRoomId, onReceiveMessage)
             );
         }
 
@@ -61,7 +61,7 @@ const RoomContextProvider = ({ children }) => {
                 unSubscribeToRoom();
             }
         };
-    }, [subscription, currentRoomToken, connected]);
+    }, [subscription, currentRoomId, connected]);
 
     const onReceiveMessage = stompMessage => {
         const { body, ack, nack } = stompMessage;
@@ -102,11 +102,11 @@ const RoomContextProvider = ({ children }) => {
         }
 
         const message = {
-            id: uuidv4(),
-            roomId: currentRoomToken,
+            messageId: uuidv4(),
+            roomId: currentRoomId,
             content: textMessage,
             timestamp: new Date().getTime(),
-            messageOwnerToken: userToken
+            userToken // messageOwnerToken: userToken
         };
 
         send(message, transaction);
