@@ -3,25 +3,23 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API_CONSTANTS } from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
+import { setCurrentRoom } from './channel.reducer';
+
 import HttpService from '../../services/HttpService';
 
 const getRoom = createAsyncThunk(
     'channel/getRoom',
-    async ({ roomId, onSuccess }, { rejectWithValue }) => {
+    async ({ roomId }, { rejectWithValue, dispatch }) => {
         const http = new HttpService();
 
         try {
-            const url =
-                API_CONSTANTS.ROOM.ROOMS +
-                API_CONSTANTS.URL_PARAM(roomId) +
-                API_CONSTANTS.ROOM.CONTENT +
-                API_CONSTANTS.URL_QUERY_STRING({ page: 0, size: 10 });
+            const url = API_CONSTANTS.ROOM.ROOMS + API_CONSTANTS.URL_PARAM(roomId);
 
             const room = await http.get(url);
 
             const payload = roomAdapter.getRoom(room);
 
-            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
+            dispatch(setCurrentRoom(payload));
 
             return payload;
         } catch (err) {

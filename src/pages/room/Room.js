@@ -47,7 +47,6 @@ const RoomPage = () => {
             dispatch(
                 closeRoomAction(() => {
                     message.success('Bate-papo encerrado com sucesso!');
-
                     history.push(ROUTES_CONSTANTS.ROOM);
                 })
             );
@@ -57,7 +56,6 @@ const RoomPage = () => {
     const renderPageHeaderTitle = () => (
         <Title>
             <span className="main">{getRoomTitle()}</span>
-            <span>Online</span>
         </Title>
     );
 

@@ -16,7 +16,15 @@ import getUserAvailablesRooms, {
     getUserAvailablesRoomsFulfilled,
     getUserAvailablesRoomsRejected
 } from './getUserAvailablesRooms.action';
+import getMoreMessages, {
+    getMoreMessagesPending,
+    getMoreMessagesFulfilled,
+    getMoreMessagesRejected
+} from './getMoreMessages.action';
+
 import contacts from '../../mock/contacts.mock';
+import messageAdapter from '../../adapters/message.adapter';
+import { MESSAGE_STATUS } from '../../constants/messageStatus';
 
 const initialState = {
     contacts,
@@ -68,13 +76,35 @@ const channelSlice = createSlice({
                 availableRooms: newAvailableRooms
             };
         },
+        updateMessage: (state, action) => {
+            if (!state.currentRoom) return state;
+
+            const messages = [...state.currentRoom.messages];
+            const indexOfMessage = messages.findIndex(msg => msg.id === action.payload);
+            messages[indexOfMessage] = {
+                ...messages[indexOfMessage],
+                currentStatus: MESSAGE_STATUS.SENDED
+            };
+
+            return {
+                ...state,
+                currentRoom: {
+                    ...state.currentRoom,
+                    messages,
+                    quantityOfMessages: messages.length
+                }
+            };
+        },
         insertMessage: (state, action) => {
             if (state.currentRoom && state.currentRoom.messages) {
+                const newArrayOfMessages = [...state.currentRoom.messages, action.payload];
+
                 return {
                     ...state,
                     currentRoom: {
                         ...state.currentRoom,
-                        messages: [...state.currentRoom.messages, action.payload]
+                        messages: newArrayOfMessages,
+                        quantityOfMessages: newArrayOfMessages.length
                     }
                 };
             }
@@ -83,7 +113,8 @@ const channelSlice = createSlice({
                 ...state,
                 currentRoom: {
                     ...state.currentRoom,
-                    messages: [action.payload]
+                    messages: [action.payload],
+                    quantityOfMessages: 1
                 }
             };
         },
@@ -124,6 +155,20 @@ const channelSlice = createSlice({
                 ...state,
                 availableRooms: newAvailableRooms
             };
+        },
+        insertMessageFromInput: (state, action) => {
+            if (state.currentRoom && state.currentRoom.messages) {
+                const message = messageAdapter.inputToMessages(action.payload);
+
+                return {
+                    ...state,
+                    currentRoom: {
+                        ...state.currentRoom,
+                        messages: [...state.currentRoom.messages, message],
+                        quantityOfMessages: state.currentRoom.messages.length + 1
+                    }
+                };
+            }
         }
     },
     extraReducers: builder => {
@@ -139,7 +184,10 @@ const channelSlice = createSlice({
             .addCase(closeRoom.rejected, closeRoomRejected)
             .addCase(getUserAvailablesRooms.pending, getUserAvailablesRoomsPending)
             .addCase(getUserAvailablesRooms.fulfilled, getUserAvailablesRoomsFulfilled)
-            .addCase(getUserAvailablesRooms.rejected, getUserAvailablesRoomsRejected);
+            .addCase(getUserAvailablesRooms.rejected, getUserAvailablesRoomsRejected)
+            .addCase(getMoreMessages.pending, getMoreMessagesPending)
+            .addCase(getMoreMessages.fulfilled, getMoreMessagesFulfilled)
+            .addCase(getMoreMessages.rejected, getMoreMessagesRejected);
     }
 });
 
@@ -150,10 +198,12 @@ export const {
     closeError,
     setCurrentRoom,
     respondToCloseRoom,
+    updateMessage,
     insertMessage,
     newMessageOnRoom,
     removeBadges,
-    pushToAvailableRooms
+    pushToAvailableRooms,
+    insertMessageFromInput
 } = channelSlice.actions;
 
 export default channelSlice.reducer;

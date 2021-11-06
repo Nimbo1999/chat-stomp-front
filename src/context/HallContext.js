@@ -6,7 +6,7 @@ import getUserAvailablesRooms from '../redux/channel/getUserAvailablesRooms.acti
 import getRoomAction from '../redux/channel/getRoom.action';
 import { newMessageOnRoom, pushToAvailableRooms } from '../redux/channel/channel.reducer';
 import {
-    selectCurrentRoomToken,
+    selectCurrentRoomId,
     selectAvailableRooms,
     selectAvailableRoomsLength
 } from '../redux/channel/channel.selector';
@@ -14,7 +14,7 @@ import { selectUserToken } from '../redux/user/userSlice.reducer';
 
 import { useStompClientContext } from './StompClientContext';
 
-import audio from '../audios/new-message-hall.mp3';
+import audio from '../assets/audios/new-message-hall.mp3';
 
 const HallContext = createContext({});
 
@@ -23,7 +23,7 @@ const HallContextProvider = ({ children }) => {
 
     const { addHallSubscriber, connected } = useStompClientContext();
 
-    const currentRoomToken = useSelector(selectCurrentRoomToken);
+    const currentRoomId = useSelector(selectCurrentRoomId);
     const availableRooms = useSelector(selectAvailableRooms);
     const availableRoomsLength = useSelector(selectAvailableRoomsLength);
     const userToken = useSelector(selectUserToken);
@@ -55,7 +55,7 @@ const HallContextProvider = ({ children }) => {
             subscription.unsubscribe();
             setSubscription(null);
         }
-    }, [currentRoomToken, availableRoomsLength]);
+    }, [currentRoomId, availableRoomsLength]);
 
     const onReceiveMessage = stompMessage => {
         const { body } = stompMessage;
@@ -66,7 +66,7 @@ const HallContextProvider = ({ children }) => {
     };
 
     const incomingMessageHandler = payload => {
-        if (!payload.token || currentRoomToken === payload.token) {
+        if (!payload.id || currentRoomId === payload.id) {
             return;
         }
 
@@ -75,12 +75,12 @@ const HallContextProvider = ({ children }) => {
         showMessageToasty(sender, recipient);
 
         if (hasOpenedRoomWithPayloadToken(payload)) {
-            return dispatch(newMessageOnRoom(payload.token));
+            return dispatch(newMessageOnRoom(payload.id));
         }
 
         try {
             getRoomContent({
-                roomToken: payload.token,
+                roomId: payload.id,
                 onSuccess: room => onGetRoomContentSuccess(room)
             });
         } catch (err) {

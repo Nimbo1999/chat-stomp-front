@@ -26,12 +26,22 @@ export const selectAvailableRoomsLength = createSelector(
 
 export const selectCurrentRoom = createSelector([selectChannel], channel => channel.currentRoom);
 
-export const selectCurrentRoomToken = createSelector([selectCurrentRoom], currentRoom =>
-    currentRoom ? currentRoom.token : null
+export const selectCurrentRoomId = createSelector([selectCurrentRoom], currentRoom =>
+    currentRoom ? currentRoom.id : null
 );
 
 export const selectCurrentRoomMessages = createSelector([selectCurrentRoom], currentRoom =>
-    currentRoom ? currentRoom.messages : null
+    currentRoom ? currentRoom.messages : []
+);
+
+export const selectCurrentLoadedMessagesLength = createSelector(
+    [selectCurrentRoomMessages],
+    messages => messages.length
+);
+
+export const selectCurrentRoomQuantityOfMessages = createSelector(
+    [selectCurrentRoom],
+    currentRoom => (currentRoom ? currentRoom.quantityOfMessages : null)
 );
 
 export const selectCurrentRoomRecipient = createSelector([selectCurrentRoom], currentRoom =>

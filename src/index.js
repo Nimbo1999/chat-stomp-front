@@ -7,15 +7,16 @@ import { ThemeProvider } from 'styled-components';
 import App from './App';
 
 import { store } from './redux/store';
+import NetworkConnectionProvider from './context/NetworkConnectionContext';
 import theme from './layout/theme';
 import GlobalStyles from './layout/globalStyles';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <GlobalStyles />
+    <ThemeProvider theme={theme}>
+        <GlobalStyles />
 
+        <NetworkConnectionProvider>
             <Provider store={store}>
                 <BrowserRouter>
                     <Suspense fallback={<div>Loading...</div>}>
@@ -23,8 +24,8 @@ ReactDOM.render(
                     </Suspense>
                 </BrowserRouter>
             </Provider>
-        </ThemeProvider>
-    </React.StrictMode>,
+        </NetworkConnectionProvider>
+    </ThemeProvider>,
     document.getElementById('root')
 );
 

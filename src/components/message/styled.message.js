@@ -34,4 +34,17 @@ const JustifyContent = styled.div`
     justify-content: ${({ justify }) => `flex-${justify}`};
 `;
 
-export { Text, JustifyContent, CardMessage };
+const MetaWrapper = styled.div`
+    display: flex;
+    gap: ${({ theme }) => theme.spacing(1)};
+    justify-content: ${({ justify }) => `flex-${justify}`};
+    align-items: center;
+    flex: 1;
+
+    span {
+        font-size: 0.75rem;
+        color: ${({ theme }) => theme.pallet.grey2};
+    }
+`;
+
+export { Text, JustifyContent, CardMessage, MetaWrapper };
