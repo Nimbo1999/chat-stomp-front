@@ -3,14 +3,17 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import App from './App';
 
-import { store } from './redux/store';
+import { store, persistor } from './redux/store';
 import NetworkConnectionProvider from './context/NetworkConnectionContext';
 import theme from './layout/theme';
 import GlobalStyles from './layout/globalStyles';
 import * as serviceWorker from './serviceWorker';
+
+const loading = <div>Loading...</div>;
 
 ReactDOM.render(
     <ThemeProvider theme={theme}>
@@ -18,11 +21,13 @@ ReactDOM.render(
 
         <NetworkConnectionProvider>
             <Provider store={store}>
-                <BrowserRouter>
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <App />
-                    </Suspense>
-                </BrowserRouter>
+                <PersistGate persistor={persistor} loading={loading}>
+                    <BrowserRouter>
+                        <Suspense fallback={loading}>
+                            <App />
+                        </Suspense>
+                    </BrowserRouter>
+                </PersistGate>
             </Provider>
         </NetworkConnectionProvider>
     </ThemeProvider>,
