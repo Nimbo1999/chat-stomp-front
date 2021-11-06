@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { selectUserToken } from '../redux/user/userSlice.reducer';
@@ -11,7 +10,6 @@ import {
 } from '../redux/channel/channel.selector';
 import {
     insertMessage,
-    setCurrentRoom,
     insertMessageFromInput,
     updateMessage
 } from '../redux/channel/channel.reducer';
@@ -32,7 +30,6 @@ const messagesService = new MessagesService();
 
 const RoomContextProvider = ({ children }) => {
     const dispatch = useDispatch();
-    const history = useHistory();
 
     const { send, addRoomSubscriber, begin, connected } = useStompClientContext();
 
@@ -55,9 +52,7 @@ const RoomContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (!connected && subscription && subscription.unsubscribe) {
-            unSubscribeToRoom();
-            dispatch(setCurrentRoom(null));
-            return history.goBack();
+            return unSubscribeToRoom();
         }
 
         if (!currentRoomId || !currentRoomRecipientToken) return;
@@ -119,7 +114,11 @@ const RoomContextProvider = ({ children }) => {
     const sendStashMessagesOfRoomIdIfExist = () => {
         if (!roomIdStashMessages || !roomIdStashMessages.length) return;
 
-        for (const iterator of roomIdStashMessages) {
+        const orderedMessages = roomIdStashMessages.sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+        );
+
+        for (const iterator of orderedMessages) {
             const message = messageAdapter.messageToStompRequest(currentRoomId, iterator);
             send(message);
         }
