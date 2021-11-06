@@ -7,6 +7,13 @@ const messageAdapter = {
         id: messageId,
         text: content,
         userToken: messageOwnerToken
+    }),
+    messageToStompRequest: (roomId, { id, date, text, userToken }) => ({
+        messageId: id,
+        roomId,
+        content: text,
+        timestamp: new Date(date).getTime(),
+        messageOwnerToken: userToken
     })
 };
 

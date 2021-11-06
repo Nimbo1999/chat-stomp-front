@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import {
     selectCurrentRoomId,
-    selectCurrentRoomRecipientToken
+    selectCurrentRoomRecipientToken,
+    selectCurrentRoomMessages
 } from '../redux/channel/channel.selector';
 import {
     insertMessage,
@@ -15,6 +16,7 @@ import {
     updateMessage
 } from '../redux/channel/channel.reducer';
 import { registerMessage, removeMessage } from '../redux/unsentMessages/unsentMessages.reducer';
+import { selectRoomIdMessages } from '../redux/unsentMessages/unsentMessages.selector';
 
 import messageAdapter from '../adapters/message.adapter';
 
@@ -37,6 +39,8 @@ const RoomContextProvider = ({ children }) => {
     const userToken = useSelector(selectUserToken);
     const currentRoomId = useSelector(selectCurrentRoomId);
     const currentRoomRecipientToken = useSelector(selectCurrentRoomRecipientToken);
+    const roomIdStashMessages = useSelector(selectRoomIdMessages);
+    const roomMessages = useSelector(selectCurrentRoomMessages);
     const audioRef = useRef(new Audio(audio));
 
     const [subscription, setSubscription] = useState(null);
@@ -59,9 +63,10 @@ const RoomContextProvider = ({ children }) => {
         if (!currentRoomId || !currentRoomRecipientToken) return;
 
         if (connected && !subscription) {
-            return setSubscription(
+            setSubscription(
                 addRoomSubscriber(currentRoomRecipientToken, currentRoomId, onReceiveMessage)
             );
+            return sendStashMessagesOfRoomIdIfExist();
         }
 
         return () => {
@@ -84,17 +89,21 @@ const RoomContextProvider = ({ children }) => {
     const updateChatMessage = payload => dispatch(updateMessage(payload));
     const removeMessageFromStashArea = payload => dispatch(removeMessage(payload));
 
+    const hasMessageIdInChat = messageId => roomMessages.some(content => content.id === messageId);
+
     const incomingMessageHandler = async (payload, ack, nack) => {
         try {
             const data = await messagesService.getMessage(payload.messageId);
             audioRef.current.play();
-            if (data.userToken === userToken) {
+            const removeMessageFromStashPayload = {
+                messageId: payload.messageId,
+                roomId: currentRoomId
+            };
+            if (data.userToken === userToken && hasMessageIdInChat(payload.messageId)) {
                 updateChatMessage(payload.messageId);
-                return removeMessageFromStashArea({
-                    messageId: payload.messageId,
-                    roomId: currentRoomId
-                });
+                return removeMessageFromStashArea(removeMessageFromStashPayload);
             }
+            removeMessageFromStashArea(removeMessageFromStashPayload);
             includeMessageInChat({
                 text: data.content,
                 date: data.timestamp,
@@ -104,6 +113,15 @@ const RoomContextProvider = ({ children }) => {
             ack({ receipt: payload.messageId });
         } catch (err) {
             nack({ receipt: payload.messageId });
+        }
+    };
+
+    const sendStashMessagesOfRoomIdIfExist = () => {
+        if (!roomIdStashMessages || !roomIdStashMessages.length) return;
+
+        for (const iterator of roomIdStashMessages) {
+            const message = messageAdapter.messageToStompRequest(currentRoomId, iterator);
+            send(message);
         }
     };
 
