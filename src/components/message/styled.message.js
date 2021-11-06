@@ -25,7 +25,7 @@ const CardMessage = styled(Card)`
         isRecipient &&
         css`
             background: ${({ theme }) => theme.pallet.lightBlue};
-            border: 1px solid ${({ theme }) => theme.pallet.blue};
+            border: 1px solid #a5d8f5;
         `}
 `;
 
