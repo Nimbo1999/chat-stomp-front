@@ -14,6 +14,9 @@ import {
     insertMessageFromInput,
     updateMessage
 } from '../redux/channel/channel.reducer';
+import { registerMessage, removeMessage } from '../redux/unsentMessages/unsentMessages.reducer';
+
+import messageAdapter from '../adapters/message.adapter';
 
 import { useStompClientContext } from './StompClientContext';
 
@@ -75,31 +78,34 @@ const RoomContextProvider = ({ children }) => {
         return incomingMessageHandler(payload, ack, nack);
     };
 
+    const includeMessageInChat = payload => dispatch(insertMessage(payload));
+    const includeMessageInStashArea = payload => dispatch(registerMessage(payload));
+
+    const updateChatMessage = payload => dispatch(updateMessage(payload));
+    const removeMessageFromStashArea = payload => dispatch(removeMessage(payload));
+
     const incomingMessageHandler = async (payload, ack, nack) => {
         try {
             const data = await messagesService.getMessage(payload.messageId);
-
-            if (data.userToken === userToken) {
-                audioRef.current.play();
-                return updateChatMessage(payload.messageId);
-            }
-
             audioRef.current.play();
+            if (data.userToken === userToken) {
+                updateChatMessage(payload.messageId);
+                return removeMessageFromStashArea({
+                    messageId: payload.messageId,
+                    roomId: currentRoomId
+                });
+            }
             includeMessageInChat({
                 text: data.content,
                 date: data.timestamp,
                 token: payload.messageId,
                 userToken: data.userToken
             });
-
             ack({ receipt: payload.messageId });
         } catch (err) {
             nack({ receipt: payload.messageId });
         }
     };
-
-    const includeMessageInChat = payload => dispatch(insertMessage(payload));
-    const updateChatMessage = payload => dispatch(updateMessage(payload));
 
     const onSubmitMessage = event => {
         event.preventDefault();
@@ -119,6 +125,11 @@ const RoomContextProvider = ({ children }) => {
         };
 
         dispatch(insertMessageFromInput(message));
+        const payload = {
+            message: messageAdapter.inputToMessages(message),
+            roomId: currentRoomId
+        };
+        includeMessageInStashArea(payload);
         send(message, transaction);
         setTextMessage('');
         transaction.commit();

@@ -5,6 +5,7 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 import registerMessageAction from './registerMessage.action';
 import clearRoomStorageMessagesAction from './clearRoomStorageMessages.action';
+import removeMessageAction from './removeMessage.action';
 
 const initialState = {};
 
@@ -13,11 +14,12 @@ const unsentMessages = createSlice({
     initialState,
     reducers: {
         registerMessage: registerMessageAction,
-        clearRoomStorageMessages: clearRoomStorageMessagesAction
+        clearRoomStorageMessages: clearRoomStorageMessagesAction,
+        removeMessage: removeMessageAction
     }
 });
 
-export const { registerMessage, clearRoomStorageMessages } = unsentMessages.actions;
+export const { registerMessage, clearRoomStorageMessages, removeMessage } = unsentMessages.actions;
 
 export default persistReducer(
     {

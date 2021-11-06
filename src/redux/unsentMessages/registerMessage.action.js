@@ -9,15 +9,26 @@ const registerMessage = (state, action) => {
         );
     }
 
-    return {
-        ...state,
-        [payload.roomId]: [
-            ...state[payload.roomId],
-            {
-                ...payload.message
-            }
-        ]
-    };
+    const currentRoomMessagesByRoomId = state[payload.roomId];
+
+    return currentRoomMessagesByRoomId
+        ? {
+              ...state,
+              [payload.roomId]: [
+                  ...currentRoomMessagesByRoomId,
+                  {
+                      ...payload.message
+                  }
+              ]
+          }
+        : {
+              ...state,
+              [payload.roomId]: [
+                  {
+                      ...payload.message
+                  }
+              ]
+          };
 };
 
 export default registerMessage;
