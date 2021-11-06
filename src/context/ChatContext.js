@@ -27,16 +27,13 @@ const ChatContextProvider = ({ children }) => {
     const [prevScrollTopValue, setPrevScrollTopValue] = useState(null);
     const [clientHeight, setClientHeight] = useState(null);
 
-    const scrollToBottom = useCallback(
-        rowIndex => {
-            const { current } = listRef;
-            if (current && !lockScrollPosition) {
-                current.scrollToPosition(999999999999);
-                setLockScrollPosition(false);
-            }
-        },
-        [lockScrollPosition]
-    );
+    const scrollToBottom = useCallback(() => {
+        const { current } = listRef;
+        if (current && !lockScrollPosition) {
+            current.scrollToPosition(999999999999);
+            setLockScrollPosition(false);
+        }
+    }, [lockScrollPosition]);
 
     useEffect(
         () => scrollToBottom(currentLoadedMessagesLength),

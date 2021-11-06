@@ -1,5 +1,5 @@
 export const API_CONSTANTS = {
-    BASE_URL: 'http://localhost:8080',
+    BASE_URL: 'http://chatserver.testes.bringu.agsoft.com.br',
 
     ROOM: {
         ROOMS: '/rooms',
