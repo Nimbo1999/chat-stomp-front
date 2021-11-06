@@ -10,19 +10,17 @@ const closeRoom = createAsyncThunk(
     async (onSuccess, { getState, rejectWithValue }) => {
         const http = new HttpService();
 
-        const { token } = selectCurrentRoom(getState());
+        const { id } = selectCurrentRoom(getState());
 
         try {
             const url =
-                API_CONSTANTS.ROOM.ROOMS +
-                API_CONSTANTS.URL_PARAM(token) +
-                API_CONSTANTS.ROOM.CLOSE;
+                API_CONSTANTS.ROOM.ROOMS + API_CONSTANTS.URL_PARAM(id) + API_CONSTANTS.ROOM.CLOSE;
 
             await http.post({}, url);
 
-            if (onSuccess) onSuccess(token);
+            if (onSuccess) onSuccess(id);
 
-            return token;
+            return id;
         } catch (err) {
             return rejectWithValue(err.message);
         }
@@ -36,7 +34,7 @@ export const closeRoomPending = state => ({
 });
 
 export const closeRoomFulfilled = (state, action) => {
-    const newAvailableRooms = state.availableRooms.filter(({ token }) => token !== action.payload);
+    const newAvailableRooms = state.availableRooms.filter(({ id }) => id !== action.payload);
 
     return {
         ...state,
