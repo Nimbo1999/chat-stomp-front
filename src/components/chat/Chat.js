@@ -6,13 +6,13 @@ import {
     CellMeasurerCache,
     AutoSizer
 } from 'react-virtualized';
+import { useTheme } from 'styled-components';
 
 import Message from '../message/Message';
 
 import { withChatContext, useChatContext } from '../../context/ChatContext';
 
 import { ChatWrapper } from './styled.chat';
-import { useTheme } from 'styled-components';
 
 function Chat() {
     const theme = useTheme();
@@ -64,6 +64,7 @@ function Chat() {
                                     deferredMeasurementCache={cache.current}
                                     style={{ padding: `0px ${theme.spacing(2)}` }}
                                     scrollToAlignment="start"
+                                    scrollToIndex={numberOfRows - 1}
                                     onScroll={onListScroll}
                                     rowRenderer={({ index, parent, key, style }) =>
                                         messages[index] ? (

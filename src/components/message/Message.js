@@ -28,7 +28,7 @@ const Message = ({ message, style }) => {
             return dayjs(message.date).format('[Hoje às] HH:mm');
         }
 
-        return dayjs(message.date).format('DD/MM/YYYY [às] HH-mm');
+        return dayjs(message.date).format('DD/MM/YYYY [às] HH:mm');
     };
 
     const formatText = () => {
@@ -63,7 +63,7 @@ const Message = ({ message, style }) => {
         );
 
     return (
-        <List.Item style={style}>
+        <List.Item style={{ ...style, overflowY: 'hidden' }}>
             <Row justify={justify} style={{ width: '100%' }}>
                 <Col span={20}>
                     <JustifyContent justify={justify}>

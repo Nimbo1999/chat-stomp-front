@@ -27,13 +27,28 @@ const ChatContextProvider = ({ children }) => {
     const [prevScrollTopValue, setPrevScrollTopValue] = useState(null);
     const [clientHeight, setClientHeight] = useState(null);
 
-    const scrollToBottom = useCallback(() => {
-        const { current } = listRef;
-        if (current && !lockScrollPosition) {
-            current.scrollToPosition(999999999999);
-            setLockScrollPosition(false);
-        }
-    }, [lockScrollPosition]);
+    const scrollToBottom = useCallback(
+        currentLoadedMessagesLength => {
+            const { current } = listRef;
+
+            try {
+                if (quantityOfMessages) {
+                    current.recomputeRowHeights();
+                }
+
+                if (!lockScrollPosition) {
+                    current.scrollToRow(currentLoadedMessagesLength - 1);
+                    setLockScrollPosition(false);
+                }
+            } catch (err) {
+                if (process && process.env.NODE_ENV === 'development') {
+                    console.log('Unabled to call listRef.current!!');
+                    console.log(err);
+                }
+            }
+        },
+        [lockScrollPosition]
+    );
 
     useEffect(
         () => scrollToBottom(currentLoadedMessagesLength),
