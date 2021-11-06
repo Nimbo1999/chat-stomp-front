@@ -5,8 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { selectUserToken } from '../redux/user/userSlice.reducer';
 import {
     selectCurrentRoomId,
-    selectCurrentRoomRecipientToken,
-    selectCurrentRoomMessages
+    selectCurrentRoomRecipientToken
 } from '../redux/channel/channel.selector';
 import {
     insertMessage,
@@ -37,7 +36,6 @@ const RoomContextProvider = ({ children }) => {
     const currentRoomId = useSelector(selectCurrentRoomId);
     const currentRoomRecipientToken = useSelector(selectCurrentRoomRecipientToken);
     const roomIdStashMessages = useSelector(selectRoomIdMessages);
-    const roomMessages = useSelector(selectCurrentRoomMessages);
     const audioRef = useRef(new Audio(audio));
 
     const [subscription, setSubscription] = useState(null);
@@ -84,8 +82,6 @@ const RoomContextProvider = ({ children }) => {
     const updateChatMessage = payload => dispatch(updateMessage(payload));
     const removeMessageFromStashArea = payload => dispatch(removeMessage(payload));
 
-    const hasMessageIdInChat = messageId => roomMessages.some(content => content.id === messageId);
-
     const incomingMessageHandler = async (payload, ack, nack) => {
         try {
             const data = await messagesService.getMessage(payload.messageId);
@@ -94,7 +90,7 @@ const RoomContextProvider = ({ children }) => {
                 messageId: payload.messageId,
                 roomId: currentRoomId
             };
-            if (data.userToken === userToken && hasMessageIdInChat(payload.messageId)) {
+            if (data.userToken === userToken) {
                 updateChatMessage(payload.messageId);
                 return removeMessageFromStashArea(removeMessageFromStashPayload);
             }
