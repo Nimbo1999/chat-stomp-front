@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import {
     selectCurrentRoomMessages,
-    selectCurrentRoomQuantityOfMessages,
-    selectCurrentLoadedMessagesLength
+    selectCurrentRoomQuantityOfMessages
+    // selectMessagesCont
 } from '../redux/channel/channel.selector';
 import getMoreMessagesAction from '../redux/channel/getMoreMessages.action';
 
@@ -15,59 +15,58 @@ const ChatContextProvider = ({ children }) => {
 
     const listRef = useRef(null);
 
-    const messages = useSelector(selectCurrentRoomMessages);
-    const currentLoadedMessagesLength = useSelector(selectCurrentLoadedMessagesLength);
+    const currentRoomMessages = useSelector(selectCurrentRoomMessages);
+    // const messagesCount = useSelector(selectMessagesCont);
     const quantityOfMessages = useSelector(selectCurrentRoomQuantityOfMessages);
 
-    const [page, setPage] = useState(0);
-    const [size] = useState(100000);
     const [hasNextPage, setHasNextPage] = useState(false);
-    const [lockScrollPosition, setLockScrollPosition] = useState(false);
     const [currentScrollTopValue, setCurrentScrollTopValue] = useState(null);
     const [prevScrollTopValue, setPrevScrollTopValue] = useState(null);
     const [clientHeight, setClientHeight] = useState(null);
+    const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
 
-    const scrollToBottom = useCallback(
-        currentLoadedMessagesLength => {
-            const { current } = listRef;
+    const messages = [...currentRoomMessages];
 
-            try {
-                if (quantityOfMessages) {
-                    current.recomputeRowHeights();
-                }
+    // const scrollToBottom = useCallback(
+    //     currentLoadedMessagesLength => {
+    //         const { current } = listRef;
 
-                if (!lockScrollPosition) {
-                    current.scrollToRow(currentLoadedMessagesLength - 1);
-                    setLockScrollPosition(false);
-                }
-            } catch (err) {
-                if (process && process.env.NODE_ENV === 'development') {
-                    console.log('Unabled to call listRef.current!!');
-                    console.log(err);
-                }
-            }
-        },
-        [lockScrollPosition]
-    );
+    //         try {
+    //             if (quantityOfMessages) {
+    //                 current.recomputeRowHeights();
+    //             }
 
-    useEffect(
-        () => scrollToBottom(currentLoadedMessagesLength),
-        [currentLoadedMessagesLength, scrollToBottom]
-    );
+    //             if (!lockScrollPosition) {
+    //                 current.scrollToRow(currentLoadedMessagesLength - 1);
+    //                 setLockScrollPosition(false);
+    //             }
+    //         } catch (err) {
+    //             if (process && process.env.NODE_ENV === 'development') {
+    //                 console.log('Unabled to call listRef.current!!');
+    //                 console.log(err);
+    //             }
+    //         }
+    //     },
+    //     [lockScrollPosition]
+    // );
+
+    // useEffect(() => scrollToBottom(messagesCount), [messagesCount, scrollToBottom]);
 
     const onGetMoreMessagesSuccess = payload => {
-        const totalNumberOfAcummulatedMessages = payload.length + messages.length;
-        setLockScrollPosition(Boolean(messages.length));
+        const { cursorMark } = payload;
+        setIsLoadingMoreMessages(false);
 
-        if (totalNumberOfAcummulatedMessages < quantityOfMessages) {
-            setPage(page + 1);
+        if (cursorMark) {
             return setHasNextPage(true);
         }
 
         setHasNextPage(false);
     };
 
-    const getMoreMessages = onSuccess => dispatch(getMoreMessagesAction({ page, size, onSuccess }));
+    const getMoreMessages = onSuccess => {
+        setIsLoadingMoreMessages(true);
+        dispatch(getMoreMessagesAction(onSuccess));
+    };
 
     useEffect(() => getMoreMessages(onGetMoreMessagesSuccess), []);
 
@@ -86,6 +85,8 @@ const ChatContextProvider = ({ children }) => {
      * @todo Finalizar a função de recuperar mais mensagens de uma sala.
      *  */
     const loadMoreRows = () => {
+        if (isLoadingMoreMessages) return;
+
         if (
             prevScrollTopValue &&
             currentScrollTopValue &&
@@ -109,11 +110,10 @@ const ChatContextProvider = ({ children }) => {
     return (
         <ChatContext.Provider
             value={{
-                messages,
+                messages: [...messages].reverse(),
                 quantityOfMessages,
                 numberOfRows,
                 listRef,
-                size,
                 loadMoreRows,
                 isRowLoaded,
                 onListScroll

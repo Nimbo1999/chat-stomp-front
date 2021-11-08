@@ -16,6 +16,7 @@ const roomAdapter = {
         closedOn: room.closedOn,
         messages: [],
         quantityOfMessages,
+        messagesCount: 0,
         recipient: {
             token: room.recipient.token,
             name: room.recipient.name
@@ -23,19 +24,28 @@ const roomAdapter = {
         sender: {
             token: room.sender.token,
             name: room.sender.name
-        }
+        },
+        cursorMark: ''
     }),
 
-    getMoreMessages: ({ messages }) =>
-        messages && messages.length
-            ? messages.map(message => ({
-                  id: message.id,
-                  userToken: message.userToken,
-                  currentStatus: message.currentStatus,
-                  text: message.content,
-                  date: message.timestamp
-              }))
-            : [],
+    getMoreMessages: ({ messages, count, cursorMark }) => {
+        const roomMessages =
+            messages && messages.length
+                ? messages.map(message => ({
+                      id: message.id,
+                      userToken: message.userToken,
+                      currentStatus: message.currentStatus,
+                      text: message.content,
+                      date: message.timestamp
+                  }))
+                : [];
+
+        return {
+            count,
+            cursorMark,
+            messages: roomMessages
+        };
+    },
 
     getUserAvailablesRooms: rooms =>
         rooms.map(({ id, recipient, sender }) => ({

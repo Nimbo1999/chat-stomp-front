@@ -29,15 +29,14 @@ function Chat() {
         listRef,
         loadMoreRows,
         isRowLoaded,
-        onListScroll,
-        size
+        onListScroll
     } = useChatContext();
 
     useEffect(() => {
         const { current } = listRef;
 
         if (current && messages.length) {
-            current.scrollToRow(numberOfRows);
+            // current.scrollToRow(numberOfRows);
         }
     }, [listRef.current]);
 
@@ -47,8 +46,8 @@ function Chat() {
                 isRowLoaded={isRowLoaded}
                 loadMoreRows={loadMoreRows}
                 rowCount={quantityOfMessages}
-                minimumBatchSize={size}
-                threshold={size}
+                minimumBatchSize={14}
+                threshold={28}
             >
                 {({ onRowsRendered, registerChild }) => {
                     registerChild(listRef);
@@ -64,7 +63,7 @@ function Chat() {
                                     deferredMeasurementCache={cache.current}
                                     style={{ padding: `0px ${theme.spacing(2)}` }}
                                     scrollToAlignment="start"
-                                    scrollToIndex={numberOfRows - 1}
+                                    // scrollToIndex={numberOfRows - 1} Essa propriedade joga a scroll para baixo sempre que buscamos mais mensagens do back
                                     onScroll={onListScroll}
                                     rowRenderer={({ index, parent, key, style }) =>
                                         messages[index] ? (

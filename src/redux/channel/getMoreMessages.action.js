@@ -3,28 +3,29 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API_CONSTANTS } from '../../constants/api.constants';
 import roomAdapter from '../../adapters/room.adapter';
 
-import { selectCurrentRoomId } from './channel.selector';
+import { selectCurrentRoomId, selectCursorMark } from './channel.selector';
 
 import HttpService from '../../services/HttpService';
 
 const getMoreMessages = createAsyncThunk(
     'channel/getMoreMessages',
-    async ({ page, size, onSuccess }, { rejectWithValue, getState }) => {
+    async (onSuccess, { rejectWithValue, getState }) => {
         const http = new HttpService();
         const roomId = selectCurrentRoomId(getState());
+        const cursorMark = selectCursorMark(getState());
 
         try {
             const url =
                 API_CONSTANTS.ROOM.ROOMS +
                 API_CONSTANTS.URL_PARAM(roomId) +
                 API_CONSTANTS.ROOM.MESSEGES +
-                API_CONSTANTS.URL_QUERY_STRING({ page, size });
+                API_CONSTANTS.URL_QUERY_STRING({ cursorMark });
 
-            const messages = await http.get(url);
+            const response = await http.get(url);
 
-            const payload = roomAdapter.getMoreMessages(messages);
+            const payload = roomAdapter.getMoreMessages(response);
 
-            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload.reverse());
+            if (onSuccess && typeof onSuccess === 'function') onSuccess(payload);
 
             return payload;
         } catch (err) {
@@ -40,16 +41,22 @@ export const getMoreMessagesPending = state => ({
 });
 
 export const getMoreMessagesFulfilled = (state, action) => {
-    const messages = [...action.payload];
-    if (state.currentRoom && state.currentRoom.messages)
-        messages.push(...state.currentRoom.messages);
+    const { messages, count, cursorMark } = action.payload;
+
+    const roomMessages = [...state.currentRoom.messages];
+
+    if (state.currentRoom && state.currentRoom.messages) {
+        roomMessages.push(...messages);
+    }
 
     return {
         ...state,
         loading: false,
         currentRoom: {
             ...state.currentRoom,
-            messages
+            messages: roomMessages,
+            cursorMark,
+            messagesCount: count
         }
     };
 };
