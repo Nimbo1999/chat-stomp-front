@@ -11,13 +11,15 @@ function CommentaryInput() {
 
     const submitButton = useRef(null);
 
-    const specialKeyPressed = event => event.metaKey || event.ctrlKey;
+    const specialKeyPressed = event => event.shiftKey;
 
     const onPressEnterInTextArea = event => {
         event.stopPropagation();
-
-        if (specialKeyPressed(event) && submitButton.current) {
+        try {
+            if (specialKeyPressed(event)) return;
             return submitButton.current.click();
+        } catch(err) {
+            return;
         }
     };
 
